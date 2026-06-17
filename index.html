@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNCF Live Board</title>
+    <link rel="stylesheet" href="/src/style.css">
+</head>
+
+<body>
+    <div id="app">
+        <header>
+            <h1>Mon Tableau de Gare Live</h1>
+            <h2 id="route-label">Chargement...</h2>
+        </header>
+
+        <main>
+            <search-settings></search-settings>
+            <favorites-manager></favorites-manager>
+
+            <section class="results-section">
+                <h3>Prochains départs</h3>
+                <div id="journeys-container">
+                    <div class="loader">Initialisation du tableau...</div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,5 @@
+purge.sh
+env.*
+node_modules/
+.vite
+.vscode
