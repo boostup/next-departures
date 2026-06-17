@@ -1,27 +1,29 @@
+import { currentConfig } from '../../state.js';
 import htmlText from './favorites-manager.html?raw';
 import cssText from './favorites-manager.css?inline';
-import { currentConfig } from '../../state.js';
 
 class FavoritesManager extends HTMLElement {
     constructor() {
         super();
-        this.shadow = this.attachShadow({ mode: 'open' });
+        this.attachShadow({ mode: 'open' });
+        this.shadowRoot.innerHTML = `<style>${cssText}</style>${htmlText}`;
+        this.container = this.shadowRoot.getElementById('container');
     }
 
     connectedCallback() {
-        this.shadow.innerHTML = `<style>${cssText}</style>${htmlText}`;
-        this.listContainer = this.shadow.getElementById('favorites-list');
-        this.btnSave = this.shadow.getElementById('btn-save-current');
-
         this.renderList();
-        this.initEvents();
+        this.bindEvents();
 
-        // Réactivité locale : redessiner la liste si l'état des favoris ou par défaut change à distance
-        window.addEventListener('app-state-changed', (e) => {
+        this.stateListener = (e) => {
             if (e.detail.property === 'favorites' || e.detail.property === 'defaultRoute') {
                 this.renderList();
             }
-        });
+        };
+        window.addEventListener('app-state-changed', this.stateListener);
+    }
+
+    disconnectedCallback() {
+        window.removeEventListener('app-state-changed', this.stateListener);
     }
 
     renderList() {
@@ -29,71 +31,50 @@ class FavoritesManager extends HTMLElement {
         const def = currentConfig.defaultRoute;
 
         if (favs.length === 0) {
-            this.listContainer.innerHTML = `<div class="no-fav">Aucun trajet enregistré dans vos favoris.</div>`;
+            this.container.innerHTML = `<div class="empty-label">Aucun trajet enregistré. Ajoutez-en un depuis l'écran principal.</div>`;
             return;
         }
 
-        this.listContainer.innerHTML = favs.map((route, index) => {
+        this.container.innerHTML = favs.map((route, i) => {
             const isDefault = def && def.from.id === route.from.id && def.to.id === route.to.id;
-
             return `
-                <div class="favorite-item ${isDefault ? 'is-default' : ''}">
-                    <button class="btn-load" data-index="${index}">
-                        ${isDefault ? '👑' : '⭐'} ${route.label}
+                <div class="fav-item">
+                    <button class="fav-title" data-action="load" data-index="${i}">
+                        ${route.label}
                     </button>
-                    <div class="actions-group">
-                        <button class="btn-action btn-pin" data-index="${index}" ${isDefault ? 'disabled' : ''} title="Définir par défaut">
-                            📌
+                    <div class="actions">
+                        <button class="btn btn-pin ${isDefault ? 'active' : ''}" data-action="pin" data-index="${i}">
+                            ${isDefault ? '👑' : '📌'}
                         </button>
-                        <button class="btn-action btn-delete" data-index="${index}" title="Supprimer">
-                            ×
-                        </button>
+                        <button class="btn btn-delete" data-action="delete" data-index="${i}">×</button>
                     </div>
                 </div>
             `;
         }).join('');
     }
 
-    initEvents() {
-        // Enregistrement du trajet actif
-        this.btnSave.addEventListener('click', () => {
-            const currentRouteId = `${currentConfig.from.id}-${currentConfig.to.id}`;
-            const exists = currentConfig.favorites.some(f => `${f.from.id}-${f.to.id}` === currentRouteId);
+    bindEvents() {
+        this.container.addEventListener('click', (e) => {
+            const button = e.target.closest('button');
+            if (!button) return;
 
-            if (exists) return alert("Ce trajet fait déjà partie de vos favoris !");
+            const index = parseInt(button.dataset.index, 10);
+            const action = button.dataset.action;
+            const targetRoute = currentConfig.favorites[index];
 
-            currentConfig.favorites = [
-                ...currentConfig.favorites,
-                { from: currentConfig.from, to: currentConfig.to, label: currentConfig.label }
-            ];
-        });
+            if (!targetRoute) return;
 
-        // Délégation d'événements interne au Shadow DOM
-        this.listContainer.addEventListener('click', (e) => {
-            const loadBtn = e.target.closest('.btn-load');
-            const pinBtn = e.target.closest('.btn-pin');
-            const deleteBtn = e.target.closest('.btn-delete');
-            const index = parseInt(loadBtn?.dataset.index || pinBtn?.dataset.index || deleteBtn?.dataset.index, 10);
-
-            if (isNaN(index)) return;
-
-            if (loadBtn) {
-                const targetRoute = currentConfig.favorites[index];
-                currentConfig.label = targetRoute.label;
+            if (action === 'load') {
                 currentConfig.from = targetRoute.from;
                 currentConfig.to = targetRoute.to;
-            }
-
-            if (pinBtn) {
-                currentConfig.defaultRoute = { ...currentConfig.favorites[index] };
-            }
-
-            if (deleteBtn) {
-                const routeToDelete = currentConfig.favorites[index];
+                // Fermeture propre du volet de réglages
+                document.getElementById('view-settings-favorites').classList.remove('active');
+                document.getElementById('view-board').classList.add('active');
+            } else if (action === 'pin') {
+                currentConfig.defaultRoute = targetRoute;
+            } else if (action === 'delete') {
                 const def = currentConfig.defaultRoute;
-
-                // Si on supprime la ligne par défaut courante, on réinitialise l'état par défaut
-                if (def && def.from.id === routeToDelete.from.id && def.to.id === routeToDelete.to.id) {
+                if (def && def.from.id === targetRoute.from.id && def.to.id === targetRoute.to.id) {
                     currentConfig.defaultRoute = null;
                 }
                 currentConfig.favorites = currentConfig.favorites.filter((_, i) => i !== index);

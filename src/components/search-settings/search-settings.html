@@ -1,31 +1,23 @@
-<div class="container">
-    <button class="toggle-panel-btn">
-        ⚙️ Options de recherche <span class="arrow-icon">▼</span>
-    </button>
-
-    <div class="filter-panel">
-        <div class="panel-content">
-            <div class="toggle-row">
-                <span>Auto-rafraîchissement (60s)</span>
-                <label class="switch">
-                    <input class="js-auto" type="checkbox" />
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="toggle-row">
-                <span>Inclure Autocars 🚌</span>
-                <label class="switch">
-                    <input class="js-autocars" type="checkbox" />
-                    <span class="slider"></span>
-                </label>
-            </div>
-            <div class="toggle-row">
-                <span>Trajets avec correspondances 🔄</span>
-                <label class="switch">
-                    <input class="js-indirect" type="checkbox" />
-                    <span class="slider"></span>
-                </label>
-            </div>
-        </div>
+<div class="settings-card">
+    <div class="row">
+        <span class="label-desc">Chargement Auto au démarrage</span>
+        <label class="switch">
+            <input id="auto-toggle" type="checkbox">
+            <span class="slider"></span>
+        </label>
+    </div>
+    <div class="row">
+        <span class="label-desc">Autoriser les Autocars 🚌</span>
+        <label class="switch">
+            <input id="autocar-toggle" type="checkbox">
+            <span class="slider"></span>
+        </label>
+    </div>
+    <div class="row">
+        <span class="label-desc">Correspondances autorisées</span>
+        <label class="switch">
+            <input id="indirect-toggle" type="checkbox">
+            <span class="slider"></span>
+        </label>
     </div>
 </div>

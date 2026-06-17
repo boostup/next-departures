@@ -1,46 +1,45 @@
+import { currentConfig } from '../../state.js';
 import htmlText from './search-settings.html?raw';
 import cssText from './search-settings.css?inline';
-import { currentConfig } from '../../state.js';
 
 class SearchSettings extends HTMLElement {
     constructor() {
         super();
-        this.shadow = this.attachShadow({ mode: 'open' });
+        this.attachShadow({ mode: 'open' });
+        // Utilisation propre de Vite pour injecter le HTML/CSS isolés sans chaînes de texte complexes
+        this.shadowRoot.innerHTML = `<style>${cssText}</style>${htmlText}`;
     }
 
     connectedCallback() {
-        this.shadow.innerHTML = `<style>${cssText}</style>${htmlText}`;
+        this.autoToggle = this.shadowRoot.getElementById('auto-toggle');
+        this.autocarToggle = this.shadowRoot.getElementById('autocar-toggle');
+        this.indirectToggle = this.shadowRoot.getElementById('indirect-toggle');
 
-        this.container = this.shadow.querySelector('.container');
-        this.btnToggle = this.shadow.querySelector('.toggle-panel-btn');
-        this.inputAuto = this.shadow.querySelector('.js-auto');
-        this.inputAutocars = this.shadow.querySelector('.js-autocars');
-        this.inputIndirect = this.shadow.querySelector('.js-indirect');
+        this.syncState();
+        this.bindEvents();
 
-        this.syncInputs();
-        this.initEvents();
+        this.stateListener = () => this.syncState();
+        window.addEventListener('app-state-changed', this.stateListener);
     }
 
-    syncInputs() {
-        this.inputAuto.checked = currentConfig.autoRefreshEnabled;
-        this.inputAutocars.checked = currentConfig.autocarRoutesEnabled;
-        this.inputIndirect.checked = currentConfig.indirectRoutesEnabled;
+    disconnectedCallback() {
+        window.removeEventListener('app-state-changed', this.stateListener);
     }
 
-    initEvents() {
-        this.btnToggle.addEventListener('click', () => {
-            this.container.classList.toggle('is-open');
-        });
+    syncState() {
+        this.autoToggle.checked = currentConfig.autoEnabled;
+        this.autocarToggle.checked = currentConfig.autocarRoutesEnabled;
+        this.indirectToggle.checked = currentConfig.indirectRoutesEnabled;
+    }
 
-        this.inputAuto.addEventListener('change', (e) => {
-            currentConfig.autoRefreshEnabled = e.target.checked;
+    bindEvents() {
+        this.autoToggle.addEventListener('change', (e) => {
+            currentConfig.autoEnabled = e.target.checked;
         });
-
-        this.inputAutocars.addEventListener('change', (e) => {
+        this.autocarToggle.addEventListener('change', (e) => {
             currentConfig.autocarRoutesEnabled = e.target.checked;
         });
-
-        this.inputIndirect.addEventListener('change', (e) => {
+        this.indirectToggle.addEventListener('change', (e) => {
             currentConfig.indirectRoutesEnabled = e.target.checked;
         });
     }
