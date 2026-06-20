@@ -16,20 +16,28 @@
             <header class="view-header">
                 <div class="header-main">
                     <h1 id="route-display">Chargement...</h1>
-                    <button id="quick-fav-btn" class="icon-btn" title="Définir ce trajet par défaut">☆</button>
+                    <button id="quick-fav-btn" class="icon-btn" title="Définir ce trajet par défaut" aria-label="Définir ce trajet par défaut">
+                        <span class="icon-placeholder" data-icon="star" data-size="24"></span>
+                    </button>
                 </div>
-                <button id="go-settings-btn" class="settings-gear-btn">⚙️</button>
+                <button id="go-settings-btn" class="settings-gear-btn" title="Réglages" aria-label="Ouvrir les réglages">
+                    <span class="icon-placeholder" data-icon="cog" data-size="24"></span>
+                </button>
             </header>
 
             <section class="search-section">
                 <div class="input-row">
-                    <button id="locate-btn" class="action-btn-accent" title="Me géolocaliser">📍</button>
+                    <button id="locate-btn" class="action-btn-accent" title="Me géolocaliser" aria-label="Me géolocaliser">
+                        <span class="icon-placeholder" data-icon="map-pin" data-size="20"></span>
+                    </button>
                     <div class="autocomplete-container">
                         <input id="dest-input" class="text-input" placeholder="Où allez-vous ? (ex: Vichy)"
                             autocomplete="off">
                         <div id="suggestions-box" class="suggestions-dropdown"></div>
                     </div>
-                    <button id="search-action-btn" class="action-btn">OK</button>
+                    <button id="search-action-btn" class="action-btn" aria-label="Rechercher">
+                        <span class="icon-placeholder" data-icon="search" data-size="20"></span>
+                    </button>
                 </div>
             </section>
 
@@ -39,30 +47,40 @@
                 </div>
             </section>
 
-            <button id="manual-refresh-btn" class="refresh-main-btn">Actualiser</button>
+            <button id="manual-refresh-btn" class="refresh-main-btn">
+                <span class="icon-placeholder" data-icon="refresh" data-size="18"
+                    style="margin-right: 8px; vertical-align: middle;"></span>
+                Actualiser
+            </button>
         </div>
 
         <!-- ÉCRAN RÉGLAGES PRINCIPAL -->
         <div id="view-settings" class="view-screen">
             <header class="view-header">
-                <button class="back-btn" data-target="board">◀ Retour</button>
+                <button class="back-btn" data-target="board">
+                    <span class="icon-placeholder" data-icon="arrow-left" data-size="18"></span>
+                    Retour
+                </button>
                 <h1>Réglages</h1>
                 <div style="width: 44px;"></div>
             </header>
 
             <ul class="settings-list">
                 <li class="settings-item" data-navigate="settings-favorites">
-                    <span class="item-icon">⭐</span>
+                    <span class="item-icon"><span class="icon-placeholder" data-icon="star" data-filled="true"
+                            data-size="22"></span></span>
                     <span class="item-label">Trajets favoris</span>
-                    <span class="item-accessory">chevron</span>
+                    <span class="item-accessory"><span class="icon-placeholder" data-icon="chevron-right"
+                            data-size="18"></span></span>
                 </li>
                 <li class="settings-item" data-navigate="settings-filters">
-                    <span class="item-icon">⚙️</span>
+                    <span class="item-icon"><span class="icon-placeholder" data-icon="cog" data-size="22"></span></span>
                     <span class="item-label">Filtres de recherche</span>
-                    <span class="item-accessory">chevron</span>
+                    <span class="item-accessory"><span class="icon-placeholder" data-icon="chevron-right"
+                            data-size="18"></span></span>
                 </li>
                 <li class="settings-item-static">
-                    <span class="item-icon">🌓</span>
+                    <span class="item-icon"><span class="icon-placeholder" data-icon="sun" data-size="22"></span></span>
                     <span class="item-label">Mode Sombre</span>
                     <label class="switch">
                         <input id="theme-toggle" type="checkbox">
@@ -75,7 +93,10 @@
         <!-- SOUS-ÉCRAN FAVORIS -->
         <div id="view-settings-favorites" class="view-screen">
             <header class="view-header">
-                <button class="back-btn" data-target="settings">◀ Réglages</button>
+                <button class="back-btn" data-target="settings">
+                    <span class="icon-placeholder" data-icon="arrow-left" data-size="18"></span>
+                    Réglages
+                </button>
                 <h1>Favoris</h1>
                 <div style="width: 44px;"></div>
             </header>
@@ -87,7 +108,10 @@
         <!-- SOUS-ÉCRAN FILTRES -->
         <div id="view-settings-filters" class="view-screen">
             <header class="view-header">
-                <button class="back-btn" data-target="settings">◀ Réglages</button>
+                <button class="back-btn" data-target="settings">
+                    <span class="icon-placeholder" data-icon="arrow-left" data-size="18"></span>
+                    Réglages
+                </button>
                 <h1>Filtres</h1>
                 <div style="width: 44px;"></div>
             </header>

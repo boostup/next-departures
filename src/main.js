@@ -3,10 +3,55 @@ import { currentConfig } from './state.js';
 import { DEFAULT_STATIONS, API_JOURNEYS_URL, API_PLACES_URL } from './constants.js';
 import './components/search-settings/search-settings.js';
 import './components/favorites-manager/favorites-manager.js';
+import {
+    iconStar,
+    iconCog,
+    iconMapPin,
+    iconArrowLeft,
+    iconChevronRight,
+    iconBus,
+    iconTrain,
+    iconRefresh,
+    iconSearch,
+    iconClock,
+    iconSun,
+    iconMoon
+} from './icons/index.js';
 
 let suggestionTimeout = null;
 
+/**
+ * Injects SVG icons into all .icon-placeholder elements.
+ */
+function injectIcons() {
+    const iconMap = {
+        'star': iconStar,
+        'cog': iconCog,
+        'map-pin': iconMapPin,
+        'arrow-left': iconArrowLeft,
+        'chevron-right': iconChevronRight,
+        'bus': iconBus,
+        'train': iconTrain,
+        'refresh': iconRefresh,
+        'search': iconSearch,
+        'clock': iconClock,
+        'sun': iconSun,
+        'moon': iconMoon
+    };
+
+    document.querySelectorAll('.icon-placeholder').forEach(el => {
+        const name = el.dataset.icon;
+        const filled = el.dataset.filled === 'true';
+        const size = parseInt(el.dataset.size, 10) || 20;
+        const iconFn = iconMap[name];
+        if (iconFn) {
+            el.innerHTML = iconFn({ size, className: '', filled });
+        }
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+    injectIcons();
     initTheme();
     initNavigationRouter();
     initAutocomplete();
@@ -18,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentConfig.to = currentConfig.defaultRoute.to;
         fetchSncbJourneys();
     } else {
-        triggerGeolocationAndProximity();
+        initGeolocationAndProximity();
     }
 
     // Écouteur réactif général d'état
@@ -38,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateQuickFavBadge();
 });
 
-function triggerGeolocationAndProximity() {
+function initGeolocationAndProximity() {
     const boardEl = document.getElementById('journeys-board');
     boardEl.innerHTML = '<div class="sys-msg">Calcul de la position GPS...</div>';
 
@@ -92,14 +137,14 @@ async function fetchSncbJourneys() {
         const response = await fetch(url, { headers: { 'Authorization': apiKey } });
         if (!response.ok) throw new Error();
         const data = await response.json();
-        const parsed = parseDirectJourneys(data);
+        const parsed = parseJourneys(data);
         displayJourneysBoard(parsed);
     } catch (e) {
         boardEl.innerHTML = '<div class="sys-msg" style="color: #ff5252;">Une erreur réseau est survenue. Veuillez réessayer.</div>';
     }
 }
 
-function parseDirectJourneys(apiResponse) {
+function parseJourneys(apiResponse) {
     const journeys = apiResponse.journeys || [];
     return journeys.map(journey => {
         const depTime = journey.departure_date_time;
@@ -108,13 +153,15 @@ function parseDirectJourneys(apiResponse) {
         const transitSection = (journey.sections || []).find(sec => sec.type === "public_transport");
         const displayInfo = transitSection?.display_informations || {};
 
+        const physicalMode = (displayInfo.physical_mode || "").toLowerCase();
+        const isAutocar = physicalMode.includes("coach") || physicalMode.includes("bus") || physicalMode.includes("autocar");
+
         return {
             departureTime: depTime,
             arrivalTime: arrTime,
             direction: displayInfo.direction || "Inconnue",
             headsign: displayInfo.headsign || displayInfo.code || "Numéro inconnu",
-            // isAutocar: (displayInfo.physical_mode || "").toLowerCase().includes("coach") || (displayInfo.physical_mode || "").toLowerCase().includes("bus"),
-            isAutocar: true,
+            isAutocar,
             isDelayed: (transitSection?.base_departure_date_time && transitSection.base_departure_date_time !== depTime)
         };
     });
@@ -140,25 +187,61 @@ function displayJourneysBoard(departures) {
         }
         lastHeaderDate = readableDate;
 
-        const clockDep = formatSncftClockTime(item.departureTime);
-        const clockArr = formatSncftClockTime(item.arrivalTime);
+        const clockDep = formatSncfClockTime(item.departureTime);
+        const clockArr = formatSncfClockTime(item.arrivalTime);
+        const duration = computeDuration(item.departureTime, item.arrivalTime);
+
+        // Choose correct icon based on transport mode
+        const modeIcon = item.isAutocar ? iconBus({ size: 12 }) : iconTrain({ size: 12 });
+        const modeLabel = item.isAutocar ? 'Autocar' : 'Train';
 
         const card = document.createElement('div');
         card.className = 'journey-card';
-        // HTML dynamique minimaliste avec directive /*html*/ pour coloration VS Code
-        card.innerHTML = /*html*/`
+        card.innerHTML = `
             <div class="time-area">
                 <div class="time">${clockDep}</div>
-                <div class="arrival-time">Arrivée prévue à ${clockArr}</div>
+                <div class="arrival-time">→ ${clockArr}</div>
+                <div class="duration-row">
+                    <span class="duration-icon">${iconClock({ size: 14 })}</span>
+                    <span>${duration}</span>
+                </div>
             </div>
             <div class="details">
-                <span class="badge">${item.isAutocar ? '🚌 Autocar' : '🚄 Train'} n° ${item.headsign}</span>
+                <span class="badge">${modeIcon} ${modeLabel} n° ${item.headsign}</span>
                 <span class="badge">Terminus: ${item.direction}</span>
                 ${item.isDelayed ? '<div class="status-delayed">Retardé</div>' : ''}
             </div>
         `;
         boardEl.appendChild(card);
     });
+}
+
+/**
+ * Computes duration between SNCF datetime strings (YYYYMMDDTHHMMSS format)
+ * and returns a human-readable French string like "1h 22min".
+ */
+function computeDuration(departureRaw, arrivalRaw) {
+    if (!departureRaw || !arrivalRaw) return "--";
+    try {
+        const depStr = `${departureRaw.substring(0, 4)}-${departureRaw.substring(4, 6)}-${departureRaw.substring(6, 8)}T${departureRaw.substring(9, 11)}:${departureRaw.substring(11, 13)}:${departureRaw.substring(13, 15)}`;
+        const arrStr = `${arrivalRaw.substring(0, 4)}-${arrivalRaw.substring(4, 6)}-${arrivalRaw.substring(6, 8)}T${arrivalRaw.substring(9, 11)}:${arrivalRaw.substring(11, 13)}:${arrivalRaw.substring(13, 15)}`;
+
+        const depDate = new Date(depStr);
+        const arrDate = new Date(arrStr);
+        const diffMs = arrDate - depDate;
+
+        if (diffMs <= 0) return "--";
+
+        const totalMinutes = Math.round(diffMs / 60000);
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+
+        if (hours > 0 && minutes > 0) return `${hours}h ${minutes}min`;
+        if (hours > 0) return `${hours}h`;
+        return `${minutes}min`;
+    } catch (e) {
+        return "--";
+    }
 }
 
 function initAutocomplete() {
@@ -226,7 +309,7 @@ function initBoardControls() {
     const quickFavBtn = document.getElementById('quick-fav-btn');
 
     locateBtn.addEventListener('click', () => {
-        triggerGeolocationAndProximity();
+        initGeolocationAndProximity();
     });
 
     manualRefreshBtn.addEventListener('click', () => {
@@ -248,22 +331,41 @@ function initBoardControls() {
             currentConfig.autoEnabled = true;
         }
         updateQuickFavBadge();
+        triggerStarAnimation();
     });
+}
+
+function triggerStarAnimation() {
+    const btn = document.getElementById('quick-fav-btn');
+    btn.classList.remove('animate-star');
+    // Force reflow to restart animation
+    void btn.offsetWidth;
+    btn.classList.add('animate-star');
+    btn.addEventListener('animationend', () => {
+        btn.classList.remove('animate-star');
+    }, { once: true });
 }
 
 function updateQuickFavBadge() {
     const quickFavBtn = document.getElementById('quick-fav-btn');
+    const iconPlaceholder = quickFavBtn.querySelector('.icon-placeholder');
     const def = currentConfig.defaultRoute;
     const isDefault = def && def.from.id === currentConfig.from.id && def.to.id === currentConfig.to.id;
 
     if (isDefault) {
-        quickFavBtn.textContent = '★';
         quickFavBtn.classList.add('active');
         quickFavBtn.title = "Trajet par défaut actif";
+        quickFavBtn.setAttribute('aria-label', "Trajet par défaut actif");
     } else {
-        quickFavBtn.textContent = '☆';
         quickFavBtn.classList.remove('active');
         quickFavBtn.title = "Définir ce trajet comme favori par défaut";
+        quickFavBtn.setAttribute('aria-label', "Définir ce trajet comme favori par défaut");
+    }
+
+    // Update the star icon inline (filled vs outline)
+    if (iconPlaceholder) {
+        const size = parseInt(iconPlaceholder.dataset.size, 10) || 24;
+        iconPlaceholder.innerHTML = iconStar({ size, className: '', filled: isDefault });
     }
 }
 
@@ -296,6 +398,7 @@ function transitionToScreen(screenId) {
 
 function initTheme() {
     const toggle = document.getElementById('theme-toggle');
+    const themeIconEl = document.querySelector('.settings-item-static .icon-placeholder[data-icon="sun"]');
     const userPrefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
 
     if (userPrefersLight) {
@@ -306,13 +409,23 @@ function initTheme() {
         toggle.checked = true;
     }
 
+    updateThemeIcon();
+
     toggle.addEventListener('change', () => {
         if (toggle.checked) {
             document.documentElement.classList.remove('light-theme');
         } else {
             document.documentElement.classList.add('light-theme');
         }
+        updateThemeIcon();
     });
+
+    function updateThemeIcon() {
+        if (!themeIconEl) return;
+        const isDark = document.documentElement.classList.contains('light-theme') === false;
+        const size = parseInt(themeIconEl.dataset.size, 10) || 22;
+        themeIconEl.innerHTML = isDark ? iconMoon({ size }) : iconSun({ size });
+    }
 }
 
 function getHaversineDistance(lat1, lon1, lat2, lon2) {
@@ -326,7 +439,7 @@ function getHaversineDistance(lat1, lon1, lat2, lon2) {
     return R * c;
 }
 
-function formatSncftClockTime(rawDate) {
+function formatSncfClockTime(rawDate) {
     if (!rawDate) return "--:--";
     return `${rawDate.substring(9, 11)}:${rawDate.substring(11, 13)}`;
 }

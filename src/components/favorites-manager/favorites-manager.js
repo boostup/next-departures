@@ -1,6 +1,7 @@
 import { currentConfig } from '../../state.js';
 import htmlText from './favorites-manager.html?raw';
 import cssText from './favorites-manager.css?inline';
+import { iconCrown, iconPin, iconX } from '../../icons/index.js';
 
 class FavoritesManager extends HTMLElement {
     constructor() {
@@ -37,16 +38,18 @@ class FavoritesManager extends HTMLElement {
 
         this.container.innerHTML = favs.map((route, i) => {
             const isDefault = def && def.from.id === route.from.id && def.to.id === route.to.id;
+            const pinIcon = isDefault ? iconCrown({ size: 16 }) : iconPin({ size: 16 });
+            const pinLabel = isDefault ? 'Trajet par défaut' : 'Définir comme trajet par défaut';
             return `
                 <div class="fav-item">
                     <button class="fav-title" data-action="load" data-index="${i}">
                         ${route.label}
                     </button>
                     <div class="actions">
-                        <button class="btn btn-pin ${isDefault ? 'active' : ''}" data-action="pin" data-index="${i}">
-                            ${isDefault ? '👑' : '📌'}
+                        <button class="btn btn-pin ${isDefault ? 'active' : ''}" data-action="pin" data-index="${i}" aria-label="${pinLabel}">
+                            ${pinIcon}
                         </button>
-                        <button class="btn btn-delete" data-action="delete" data-index="${i}">×</button>
+                        <button class="btn btn-delete" data-action="delete" data-index="${i}" aria-label="Supprimer ce trajet">${iconX({ size: 16 })}</button>
                     </div>
                 </div>
             `;

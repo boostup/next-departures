@@ -82,8 +82,12 @@ body {
 .settings-gear-btn {
     background: none;
     border: none;
-    font-size: 1.5rem;
     cursor: pointer;
+    color: var(--text-muted);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .back-btn {
@@ -94,19 +98,36 @@ body {
     font-weight: 500;
     cursor: pointer;
     padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .icon-btn {
     background: none;
     border: none;
-    font-size: 1.4rem;
-    color: var(--text-muted);
     cursor: pointer;
     transition: color 0.2s;
+    color: var(--text-muted);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .icon-btn.active {
     color: #ffd700;
+}
+
+/* Icon placeholder styling for SVG injection */
+.icon-placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-placeholder svg {
+    display: block;
 }
 
 /* Zone d'entrée de recherche */
@@ -129,6 +150,11 @@ body {
     box-sizing: border-box;
 }
 
+.text-input:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
 .autocomplete-container {
     flex: 1;
     position: relative;
@@ -142,6 +168,9 @@ body {
     font-weight: 600;
     cursor: pointer;
     padding: 0 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .action-btn {
@@ -155,8 +184,7 @@ body {
     color: #ffffff;
 }
 
-/* STREAMING_CHUNK: Styling the overlay suggestions list elements... /
-/ Menu de Suggestions Autocomplete */
+/* Menu de Suggestions Autocomplete */
 .suggestions-dropdown {
     position: absolute;
     top: 100%;
@@ -188,12 +216,18 @@ body {
     background-color: rgba(255, 255, 255, 0.05);
 }
 
-/* STREAMING_CHUNK: Formatting layout structure of journey results display... /
-/ Cartes de Trajets */
+/* Cartes de Trajets */
 .board-section {
     flex: 1;
     overflow-y: auto;
     margin-bottom: 16px;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.board-section::-webkit-scrollbar {
+    display: none;
 }
 
 .journey-card {
@@ -203,24 +237,47 @@ body {
     margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: flex-start;
     border: 1px solid var(--border-color);
 }
 
 .journey-card .time-area {
     display: flex;
     flex-direction: column;
+    gap: 2px;
 }
 
 .journey-card .time {
     font-size: 1.8rem;
     font-weight: 800;
     letter-spacing: -0.5px;
+    line-height: 1;
 }
 
 .journey-card .arrival-time {
     font-size: 0.8rem;
     color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.journey-card .arrival-time svg {
+    flex-shrink: 0;
+}
+
+.journey-card .duration-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 6px;
+}
+
+.journey-card .duration-icon {
+    display: inline-flex;
+    align-items: center;
 }
 
 .journey-card .details {
@@ -228,6 +285,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    flex-shrink: 0;
 }
 
 .journey-card .badge {
@@ -238,6 +296,10 @@ body {
     border-radius: 5px;
     color: var(--text-muted);
     font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
 }
 
 .status-delayed {
@@ -262,8 +324,7 @@ body {
     font-size: 0.95rem;
 }
 
-/* STREAMING_CHUNK: Styling layout of iOS/Android configuration panels... /
-/ Menus de Réglages Style Mobile iOS/Android */
+/* Menus de Réglages Style Mobile iOS/Android */
 .settings-list {
     list-style: none;
     padding: 0;
@@ -290,9 +351,18 @@ body {
     border-bottom: none;
 }
 
+.settings-item:hover {
+    background-color: rgba(255, 255, 255, 0.03);
+}
+
 .item-icon {
     margin-right: 12px;
-    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+}
+
+.item-icon svg {
+    display: block;
 }
 
 .item-label {
@@ -302,16 +372,22 @@ body {
 
 .item-accessory {
     color: var(--text-muted);
-    font-size: 0.8rem;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
 }
 
-/* STREAMING_CHUNK: Defining look and touch targeting of switches... /
-/ Interrupteurs (Sliders) */
+.item-accessory svg {
+    display: block;
+}
+
+/* Interrupteurs (Sliders) */
 .switch {
     position: relative;
     display: inline-block;
     width: 46px;
     height: 26px;
+    flex-shrink: 0;
 }
 
 .switch input {
@@ -350,6 +426,7 @@ input:checked+.slider:before {
     transform: translateX(20px);
 }
 
+/* Refresh button */
 .refresh-main-btn {
     background: var(--accent-gradient);
     color: #ffffff;
@@ -360,4 +437,58 @@ input:checked+.slider:before {
     font-size: 1rem;
     cursor: pointer;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.refresh-main-btn:hover {
+    opacity: 0.9;
+}
+
+/* Star animation */
+@keyframes star-pop {
+    0% {
+        transform: scale(1);
+    }
+
+    30% {
+        transform: scale(1.4);
+    }
+
+    60% {
+        transform: scale(0.9);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.icon-btn.animate-star {
+    animation: star-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Focus visible for accessibility */
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+}
+
+/* Responsive breakpoints */
+@media (min-width: 768px) {
+    .app-layout {
+        max-width: 600px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .app-layout {
+        max-width: 600px;
+    }
+
+    .journey-card {
+        padding: 20px;
+    }
 }

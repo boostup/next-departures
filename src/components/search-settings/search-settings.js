@@ -1,12 +1,12 @@
 import { currentConfig } from '../../state.js';
 import htmlText from './search-settings.html?raw';
 import cssText from './search-settings.css?inline';
+import { iconBus } from '../../icons/index.js';
 
 class SearchSettings extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
-        // Utilisation propre de Vite pour injecter le HTML/CSS isolés sans chaînes de texte complexes
         this.shadowRoot.innerHTML = `<style>${cssText}</style>${htmlText}`;
     }
 
@@ -15,6 +15,7 @@ class SearchSettings extends HTMLElement {
         this.autocarToggle = this.shadowRoot.getElementById('autocar-toggle');
         this.indirectToggle = this.shadowRoot.getElementById('indirect-toggle');
 
+        this.injectIcons();
         this.syncState();
         this.bindEvents();
 
@@ -24,6 +25,20 @@ class SearchSettings extends HTMLElement {
 
     disconnectedCallback() {
         window.removeEventListener('app-state-changed', this.stateListener);
+    }
+
+    injectIcons() {
+        const iconMap = {
+            bus: iconBus
+        };
+
+        this.shadowRoot.querySelectorAll('.icon-placeholder').forEach(el => {
+            const iconFn = iconMap[el.dataset.icon];
+            const size = parseInt(el.dataset.size, 10) || 20;
+            if (iconFn) {
+                el.innerHTML = iconFn({ size });
+            }
+        });
     }
 
     syncState() {
