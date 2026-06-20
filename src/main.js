@@ -113,7 +113,8 @@ function parseDirectJourneys(apiResponse) {
             arrivalTime: arrTime,
             direction: displayInfo.direction || "Inconnue",
             headsign: displayInfo.headsign || displayInfo.code || "Numéro inconnu",
-            isAutocar: (displayInfo.physical_mode || "").toLowerCase().includes("coach") || (displayInfo.physical_mode || "").toLowerCase().includes("bus"),
+            // isAutocar: (displayInfo.physical_mode || "").toLowerCase().includes("coach") || (displayInfo.physical_mode || "").toLowerCase().includes("bus"),
+            isAutocar: true,
             isDelayed: (transitSection?.base_departure_date_time && transitSection.base_departure_date_time !== depTime)
         };
     });

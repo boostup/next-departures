@@ -23,6 +23,23 @@ npm test
 
 ## Tasks for AI
 
+New tasks:
+- the app must be mobile first and responsive (get tailwind or whatever is best these days, but only if it helps you, otherwise in general, I like sticking to vanilla HTML, JS and CSS as much as possible)
+- better professional polished looking non-emoji icons coming from the same set. Look for all icons (trains, buses, gears, stars, back to previous page arrows, etc) to be replaced throughout the app
+- a Nice micro Animation for star button when pressed 
+- in the settings screen to display a chevron icon instead of the word "chevron", and aligned at the end of the row
+- in the main screen:
+    - hide the scroll bar in the main screen (list of journeys) but still allow scrolling (smooth wheel/touch, trackpad, scrollbar should be invisible)
+    - for each journey in the results, display a small clock icon and the time of the journey next to each other
+
+Finally, can we have some sort of design guidelines or style guide for this app?  Like a design system for this app.  Something that we can follow throughout the development of this app.  Base it on the the current styles and colors scheme.
+    
+Make a plan, then let's review it before implementation. Make sure to stick to best practices, design patterns, components, no hard-coding, separation of concerns and all that jazz, you get the drift.  I don't want to see some beginner style coding.  Anything we add must scale, in all the meanings of the word. Use native Web APIs only (Fetch API, standard DOM manipulation, local storage) and standard CSS. No external libraries or frameworks.  This app's structure is using the modern component pattern in vanilla JS with standard ES modules and a pub sub model using proxies to manage reactive states and interaction.
+
+
+
+
+-----------------------------------------
 
 - Favorite routes must be in it's own setting settings page (this means the app must be browsable to different sections, ie: settings > favorites). Organise this like iOS or Android style settings (settings list of options > click on one setting to access the page corresponding to it)
 
