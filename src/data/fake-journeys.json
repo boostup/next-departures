@@ -1,0 +1,50 @@
+[
+  {
+    "departureOffsetMinutes": 8,
+    "durationMinutes": 23,
+    "headsign": "457800",
+    "direction": "Saint-Germain-des-Fossés",
+    "isAutocar": false,
+    "isDelayed": false
+  },
+  {
+    "departureOffsetMinutes": 24,
+    "durationMinutes": 21,
+    "headsign": "457802",
+    "direction": "Saint-Germain-des-Fossés",
+    "isAutocar": false,
+    "isDelayed": false
+  },
+  {
+    "departureOffsetMinutes": 39,
+    "durationMinutes": 22,
+    "headsign": "457804",
+    "direction": "Saint-Germain-des-Fossés",
+    "isAutocar": false,
+    "isDelayed": false
+  },
+  {
+    "departureOffsetMinutes": 53,
+    "durationMinutes": 23,
+    "headsign": "457806",
+    "direction": "Saint-Germain-des-Fossés",
+    "isAutocar": false,
+    "isDelayed": false
+  },
+  {
+    "departureOffsetMinutes": 68,
+    "durationMinutes": 24,
+    "headsign": "457808",
+    "direction": "Saint-Germain-des-Fossés",
+    "isAutocar": false,
+    "isDelayed": true
+  },
+  {
+    "departureOffsetMinutes": 82,
+    "durationMinutes": 21,
+    "headsign": "457810",
+    "direction": "Saint-Germain-des-Fossés",
+    "isAutocar": false,
+    "isDelayed": false
+  }
+]

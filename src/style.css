@@ -324,6 +324,12 @@ body {
     font-size: 0.95rem;
 }
 
+.dev-fallback-msg {
+    padding-top: 12px;
+    padding-bottom: 16px;
+    color: var(--accent);
+}
+
 /* Menus de Réglages Style Mobile iOS/Android */
 .settings-list {
     list-style: none;

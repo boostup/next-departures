@@ -1,6 +1,7 @@
 import './style.css';
 import { currentConfig } from './state.js';
 import { DEFAULT_STATIONS, API_JOURNEYS_URL, API_PLACES_URL } from './constants.js';
+import fakeJourneys from './data/fake-journeys.json';
 import './components/search-settings/search-settings.js';
 import './components/favorites-manager/favorites-manager.js';
 import {
@@ -122,6 +123,12 @@ async function fetchSncbJourneys() {
 
     const apiKey = import.meta.env.VITE_SNCF_API_KEY;
     if (!apiKey) {
+        const fallback = buildDevFallbackJourneys();
+        if (fallback.length > 0) {
+            displayJourneysBoard(fallback, { devFallback: true });
+            return;
+        }
+
         boardEl.innerHTML = '<div class="sys-msg" style="color: #ff5252;">Clé API manquante dans .env.local</div>';
         return;
     }
@@ -138,15 +145,25 @@ async function fetchSncbJourneys() {
         if (!response.ok) throw new Error();
         const data = await response.json();
         const parsed = parseJourneys(data);
+        if (parsed.length === 0) throw new Error();
         displayJourneysBoard(parsed);
     } catch (e) {
+        const fallback = buildDevFallbackJourneys();
+        if (fallback.length > 0) {
+            displayJourneysBoard(fallback, { devFallback: true });
+            return;
+        }
+
         boardEl.innerHTML = '<div class="sys-msg" style="color: #ff5252;">Une erreur réseau est survenue. Veuillez réessayer.</div>';
     }
 }
 
 function parseJourneys(apiResponse) {
-    const journeys = apiResponse.journeys || [];
-    return journeys.map(journey => {
+    if (!apiResponse || !Array.isArray(apiResponse.journeys)) {
+        throw new Error('Unexpected API response');
+    }
+
+    return apiResponse.journeys.map(journey => {
         const depTime = journey.departure_date_time;
         const arrTime = journey.arrival_date_time;
 
@@ -167,9 +184,52 @@ function parseJourneys(apiResponse) {
     });
 }
 
-function displayJourneysBoard(departures) {
+function buildDevFallbackJourneys() {
+    if (!import.meta.env.DEV) {
+        return [];
+    }
+
+    return fakeJourneys.map(item => {
+        const departureTime = buildSncfDateTime(item.departureOffsetMinutes);
+        const arrivalTime = buildSncfDateTime(item.departureOffsetMinutes + item.durationMinutes);
+
+        return {
+            departureTime,
+            arrivalTime,
+            direction: item.direction,
+            headsign: item.headsign,
+            isAutocar: item.isAutocar,
+            isDelayed: item.isDelayed
+        };
+    });
+}
+
+function buildSncfDateTime(offsetMinutes) {
+    const date = new Date(Date.now() + offsetMinutes * 60000);
+    const year = date.getFullYear();
+    const month = padNumber(date.getMonth() + 1, 2);
+    const day = padNumber(date.getDate(), 2);
+    const hours = padNumber(date.getHours(), 2);
+    const minutes = padNumber(date.getMinutes(), 2);
+    const seconds = padNumber(date.getSeconds(), 2);
+
+    return `${year}${month}${day}T${hours}${minutes}${seconds}`;
+}
+
+function padNumber(value, length) {
+    return String(value).padStart(length, '0');
+}
+
+function displayJourneysBoard(departures, options = {}) {
     const boardEl = document.getElementById('journeys-board');
     boardEl.innerHTML = '';
+
+    if (options.devFallback) {
+        const fallbackNotice = document.createElement('div');
+        fallbackNotice.className = 'sys-msg dev-fallback-msg';
+        fallbackNotice.textContent = 'Mode développement : données factices affichées car la source API n’est pas disponible.';
+        boardEl.appendChild(fallbackNotice);
+    }
 
     if (departures.length === 0) {
         boardEl.innerHTML = '<div class="sys-msg">Aucun itinéraire trouvé.</div>';
