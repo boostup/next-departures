@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SNCF Live Board</title>
-  <script type="module" crossorigin src="/trains/assets/index-ByuR2Efs.js"></script>
+  <script type="module" crossorigin src="/trains/assets/index-C-al6Qgj.js"></script>
   <link rel="stylesheet" crossorigin href="/trains/assets/index-C3BBQ0WU.css">
 </head>
 
@@ -32,7 +32,11 @@
         <div id="view-board" class="view-screen">
             <header class="view-header">
                 <div class="header-main">
-                    <h1 id="route-display">Chargement...</h1>
+                    <h1 id="route-display">
+                        <span id="origin-station" class="origin-station"></span>
+                        <span class="route-arrow">➔</span>
+                        <span id="destination-station" class="destination-station"></span>
+                    </h1>
                     <button id="quick-fav-btn" class="icon-btn" title="Définir ce trajet par défaut" aria-label="Définir ce trajet par défaut">
                         <span class="icon-placeholder" data-icon="star" data-size="24"></span>
                     </button>
@@ -44,9 +48,6 @@
 
             <section class="search-section">
                 <div class="input-row">
-                    <button id="locate-btn" class="action-btn-accent" title="Me géolocaliser" aria-label="Me géolocaliser">
-                        <span class="icon-placeholder" data-icon="map-pin" data-size="20"></span>
-                    </button>
                     <div class="autocomplete-container">
                         <input id="dest-input" class="text-input" placeholder="Où allez-vous ? (ex: Vichy)"
                             autocomplete="off">
