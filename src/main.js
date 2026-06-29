@@ -6,7 +6,6 @@ import './components/favorites-manager/favorites-manager.js';
 import {
     iconStar,
     iconCog,
-    iconMapPin,
     iconArrowLeft,
     iconChevronRight,
     iconBus,
@@ -31,7 +30,6 @@ function injectIcons() {
     const iconMap = {
         'star': iconStar,
         'cog': iconCog,
-        'map-pin': iconMapPin,
         'arrow-left': iconArrowLeft,
         'chevron-right': iconChevronRight,
         'bus': iconBus,
@@ -395,13 +393,8 @@ function initAutocomplete() {
 }
 
 function initBoardControls() {
-    const locateBtn = document.getElementById('locate-btn');
     const manualRefreshBtn = document.getElementById('manual-refresh-btn');
     const quickFavBtn = document.getElementById('quick-fav-btn');
-
-    locateBtn.addEventListener('click', () => {
-        initGeolocationAndProximity();
-    });
 
     manualRefreshBtn.addEventListener('click', () => {
         fetchSncbJourneys();
