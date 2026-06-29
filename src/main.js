@@ -217,7 +217,6 @@ async function fetchSncbJourneys() {
         if (!response.ok) throw new Error();
         const data = await response.json();
         const parsed = parseJourneys(data);
-        if (parsed.length === 0) throw new Error();
         displayJourneysBoard(parsed);
     } catch (e) {
         boardEl.innerHTML = '<div class="sys-msg" style="color: #ff5252;">Une erreur réseau est survenue. Veuillez réessayer.</div>';
@@ -225,7 +224,16 @@ async function fetchSncbJourneys() {
 }
 
 function parseJourneys(apiResponse) {
-    if (!apiResponse || !Array.isArray(apiResponse.journeys)) {
+    if (!apiResponse) {
+        throw new Error('Unexpected API response');
+    }
+
+    // API returns errors with HTTP 200 for business-level issues like no_solution
+    if (apiResponse.error && apiResponse.error.id === 'no_solution') {
+        return [];
+    }
+
+    if (!Array.isArray(apiResponse.journeys)) {
         throw new Error('Unexpected API response');
     }
 
