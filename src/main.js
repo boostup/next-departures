@@ -105,6 +105,9 @@ function initMainApp() {
             document.getElementById('route-display').textContent = value;
             updateQuickFavBadge();
         }
+        if (property === 'favorites') {
+            updateQuickFavBadge();
+        }
         if (property === 'from' || property === 'to' || property === 'autocarRoutesEnabled' || property === 'indirectRoutesEnabled') {
             fetchSncbJourneys();
         }
