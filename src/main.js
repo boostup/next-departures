@@ -99,14 +99,7 @@ function initMainApp() {
     initBoardControls();
     initApiKeySettings();
 
-    if (currentConfig.autoEnabled && currentConfig.defaultRoute) {
-        currentConfig.from = currentConfig.defaultRoute.from;
-        currentConfig.to = currentConfig.defaultRoute.to;
-        fetchSncbJourneys();
-    } else {
-        initGeolocationAndProximity();
-    }
-
+    // Set up state change listener before any route changes
     window.addEventListener('app-state-changed', (e) => {
         const { property, value } = e.detail;
 
@@ -118,6 +111,13 @@ function initMainApp() {
             fetchSncbJourneys();
         }
     });
+
+    // If a default route exists, fetch journeys automatically (from/to already set in state.js)
+    if (currentConfig.defaultRoute) {
+        fetchSncbJourneys();
+    } else {
+        initGeolocationAndProximity();
+    }
 
     document.getElementById('route-display').textContent = currentConfig.label;
     updateQuickFavBadge();
