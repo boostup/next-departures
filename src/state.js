@@ -23,7 +23,10 @@ export const currentConfig = new Proxy({
     apiKey: persistedApiKey
 }, {
     set(target, property, value) {
-        if (target[property] === value) return true;
+        // For 'from' and 'to', we need to dispatch events even if value is the same
+        // reference, because geolocation callbacks may set the same default values
+        const needsJourneyRefresh = property === 'from' || property === 'to';
+        if (!needsJourneyRefresh && target[property] === value) return true;
 
         target[property] = value;
 
