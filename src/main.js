@@ -412,14 +412,10 @@ function initBoardControls() {
         const isFav = currentConfig.favorites.some(f => `${f.from.id}-${f.to.id}` === currentRouteId);
 
         if (isFav) {
-            const match = currentConfig.favorites.find(f => `${f.from.id}-${f.to.id}` === currentRouteId);
-            currentConfig.defaultRoute = match;
-            currentConfig.autoEnabled = true;
+            currentConfig.favorites = currentConfig.favorites.filter(f => `${f.from.id}-${f.to.id}` !== currentRouteId);
         } else {
             const newFav = { from: currentConfig.from, to: currentConfig.to, label: currentConfig.label };
             currentConfig.favorites = [...currentConfig.favorites, newFav];
-            currentConfig.defaultRoute = newFav;
-            currentConfig.autoEnabled = true;
         }
         updateQuickFavBadge();
         triggerStarAnimation();
@@ -439,22 +435,22 @@ function triggerStarAnimation() {
 function updateQuickFavBadge() {
     const quickFavBtn = document.getElementById('quick-fav-btn');
     const iconPlaceholder = quickFavBtn.querySelector('.icon-placeholder');
-    const def = currentConfig.defaultRoute;
-    const isDefault = def && def.from.id === currentConfig.from.id && def.to.id === currentConfig.to.id;
+    const currentRouteId = `${currentConfig.from.id}-${currentConfig.to.id}`;
+    const isFav = currentConfig.favorites.some(f => `${f.from.id}-${f.to.id}` === currentRouteId);
 
-    if (isDefault) {
+    if (isFav) {
         quickFavBtn.classList.add('active');
-        quickFavBtn.title = "Trajet par défaut actif";
-        quickFavBtn.setAttribute('aria-label', "Trajet par défaut actif");
+        quickFavBtn.title = "Retirer ce trajet des favoris";
+        quickFavBtn.setAttribute('aria-label', "Retirer ce trajet des favoris");
     } else {
         quickFavBtn.classList.remove('active');
-        quickFavBtn.title = "Définir ce trajet comme favori par défaut";
-        quickFavBtn.setAttribute('aria-label', "Définir ce trajet comme favori par défaut");
+        quickFavBtn.title = "Ajouter ce trajet aux favoris";
+        quickFavBtn.setAttribute('aria-label', "Ajouter ce trajet aux favoris");
     }
 
     if (iconPlaceholder) {
         const size = parseInt(iconPlaceholder.dataset.size, 10) || 24;
-        iconPlaceholder.innerHTML = iconStar({ size, className: '', filled: isDefault });
+        iconPlaceholder.innerHTML = iconStar({ size, className: '', filled: isFav });
     }
 }
 
