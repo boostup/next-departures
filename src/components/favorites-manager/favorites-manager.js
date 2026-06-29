@@ -70,7 +70,7 @@ class FavoritesManager extends HTMLElement {
             if (action === 'load') {
                 currentConfig.from = targetRoute.from;
                 currentConfig.to = targetRoute.to;
-                // Fermeture propre du volet de réglages
+                document.getElementById('dest-input').value = targetRoute.to.name;
                 document.getElementById('view-settings-favorites').classList.remove('active');
                 document.getElementById('view-board').classList.add('active');
             } else if (action === 'pin') {
