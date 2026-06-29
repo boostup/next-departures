@@ -498,3 +498,103 @@ input:checked+.slider:before {
         padding: 20px;
     }
 }
+
+/* API Key Lock Screen */
+.key-lock-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    padding: 32px 24px;
+    box-sizing: border-box;
+}
+
+.key-lock-icon {
+    margin-bottom: 24px;
+    color: var(--accent);
+}
+
+.key-lock-content h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+}
+
+.key-lock-desc {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin: 0 0 24px 0;
+    max-width: 280px;
+    line-height: 1.5;
+}
+
+.key-input-row {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    max-width: 360px;
+}
+
+.key-input {
+    flex: 1;
+}
+
+.key-error-msg {
+    color: #ff5252;
+    font-size: 0.85rem;
+    margin-top: 12px;
+}
+
+.key-input-row-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.api-key-save-btn {
+    width: 100%;
+}
+
+.key-settings-msg {
+    font-size: 0.85rem;
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.key-settings-msg.success {
+    color: #4caf50;
+}
+
+.key-settings-msg.error {
+    color: #ff5252;
+}
+
+.text-btn-danger {
+    background: none;
+    border: none;
+    color: #ff5252;
+    font-size: 0.9rem;
+    cursor: pointer;
+    padding: 8px 0;
+}
+
+.text-btn-danger:hover {
+    opacity: 0.8;
+}
+
+.api-key-settings-card {
+    background: var(--card-color);
+    border-radius: 14px;
+    border: 1px solid var(--border-color);
+    padding: 20px;
+}
+
+.api-key-desc {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin: 0 0 16px 0;
+    line-height: 1.5;
+}

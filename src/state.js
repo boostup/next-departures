@@ -3,10 +3,12 @@ import { DEFAULT_STATIONS } from './constants.js';
 const KEY_FAVORITES = 'sncf_fav_routes';
 const KEY_DEFAULT_ROUTE = 'sncf_def_route';
 const KEY_AUTO_ENABLED = 'sncf_auto_init';
+const KEY_API_KEY = 'sncf_api_key';
 
 const persistedFavs = JSON.parse(localStorage.getItem(KEY_FAVORITES)) || [];
 const persistedDefault = JSON.parse(localStorage.getItem(KEY_DEFAULT_ROUTE)) || null;
 const persistedAuto = localStorage.getItem(KEY_AUTO_ENABLED) === 'true';
+const persistedApiKey = localStorage.getItem(KEY_API_KEY) || '';
 
 export const currentConfig = new Proxy({
     from: persistedDefault?.from || DEFAULT_STATIONS.ST_GERMAIN,
@@ -17,7 +19,8 @@ export const currentConfig = new Proxy({
     indirectRoutesEnabled: false,
     favorites: persistedFavs,
     defaultRoute: persistedDefault,
-    theme: 'dark'
+    theme: 'dark',
+    apiKey: persistedApiKey
 }, {
     set(target, property, value) {
         if (target[property] === value) return true;
@@ -45,6 +48,13 @@ export const currentConfig = new Proxy({
         }
         if (property === 'autoEnabled') {
             localStorage.setItem(KEY_AUTO_ENABLED, value ? 'true' : 'false');
+        }
+        if (property === 'apiKey') {
+            if (value) {
+                localStorage.setItem(KEY_API_KEY, value);
+            } else {
+                localStorage.removeItem(KEY_API_KEY);
+            }
         }
 
         // Publication de l'événement de mise à jour à destination des composants

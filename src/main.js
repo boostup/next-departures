@@ -1,7 +1,6 @@
 import './style.css';
 import { currentConfig } from './state.js';
 import { DEFAULT_STATIONS, API_JOURNEYS_URL, API_PLACES_URL } from './constants.js';
-import fakeJourneys from './data/fake-journeys.json';
 import './components/search-settings/search-settings.js';
 import './components/favorites-manager/favorites-manager.js';
 import {
@@ -20,6 +19,10 @@ import {
 } from './icons/index.js';
 
 let suggestionTimeout = null;
+
+function getApiKey() {
+    return currentConfig.apiKey || '';
+}
 
 /**
  * Injects SVG icons into all .icon-placeholder elements.
@@ -55,10 +58,47 @@ document.addEventListener('DOMContentLoaded', () => {
     injectIcons();
     initTheme();
     initNavigationRouter();
+
+    const apiKey = getApiKey();
+    if (!apiKey) {
+        showApiKeyGate();
+    } else {
+        initMainApp();
+    }
+});
+
+function showApiKeyGate() {
+    transitionToScreen('api-key');
+    const input = document.getElementById('api-key-input');
+    const submitBtn = document.getElementById('api-key-submit');
+    const errorEl = document.getElementById('api-key-error');
+
+    input.value = '';
+    errorEl.style.display = 'none';
+
+    const submitKey = () => {
+        const key = input.value.trim();
+        if (!key) {
+            errorEl.style.display = 'block';
+            return;
+        }
+        currentConfig.apiKey = key;
+        errorEl.style.display = 'none';
+        initMainApp();
+    };
+
+    submitBtn.addEventListener('click', submitKey);
+    input.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') submitKey();
+    });
+    input.focus();
+}
+
+function initMainApp() {
     initAutocomplete();
     initBoardControls();
+    initApiKeySettings();
 
-    // Démarrage : Routage automatique ou localisation
     if (currentConfig.autoEnabled && currentConfig.defaultRoute) {
         currentConfig.from = currentConfig.defaultRoute.from;
         currentConfig.to = currentConfig.defaultRoute.to;
@@ -67,7 +107,6 @@ document.addEventListener('DOMContentLoaded', () => {
         initGeolocationAndProximity();
     }
 
-    // Écouteur réactif général d'état
     window.addEventListener('app-state-changed', (e) => {
         const { property, value } = e.detail;
 
@@ -82,7 +121,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('route-display').textContent = currentConfig.label;
     updateQuickFavBadge();
-});
+    transitionToScreen('board');
+}
+
+function initApiKeySettings() {
+    const settingsInput = document.getElementById('api-key-settings-input');
+    const saveBtn = document.getElementById('api-key-settings-save');
+    const clearBtn = document.getElementById('api-key-clear-btn');
+    const msgEl = document.getElementById('api-key-settings-msg');
+
+    const syncInput = () => {
+        settingsInput.value = currentConfig.apiKey || '';
+    };
+
+    syncInput();
+
+    const stateListener = () => syncInput();
+    window.addEventListener('app-state-changed', stateListener);
+
+    saveBtn.addEventListener('click', () => {
+        const key = settingsInput.value.trim();
+        if (!key) {
+            msgEl.textContent = 'Veuillez entrer une clé API.';
+            msgEl.className = 'key-settings-msg error';
+            msgEl.style.display = 'block';
+            return;
+        }
+        currentConfig.apiKey = key;
+        msgEl.textContent = 'Clé API enregistrée avec succès.';
+        msgEl.className = 'key-settings-msg success';
+        msgEl.style.display = 'block';
+    });
+
+    clearBtn.addEventListener('click', () => {
+        currentConfig.apiKey = '';
+        settingsInput.value = '';
+        msgEl.textContent = 'Clé API supprimée. L\'application sera inaccessible jusqu\'à ce qu\'une nouvelle clé soit fournie.';
+        msgEl.className = 'key-settings-msg error';
+        msgEl.style.display = 'block';
+    });
+}
 
 function initGeolocationAndProximity() {
     const boardEl = document.getElementById('journeys-board');
@@ -121,15 +199,9 @@ async function fetchSncbJourneys() {
     const boardEl = document.getElementById('journeys-board');
     boardEl.innerHTML = '<div class="sys-msg">Recherche des trains...</div>';
 
-    const apiKey = import.meta.env.VITE_SNCF_API_KEY;
+    const apiKey = getApiKey();
     if (!apiKey) {
-        const fallback = buildDevFallbackJourneys();
-        if (fallback.length > 0) {
-            displayJourneysBoard(fallback, { devFallback: true });
-            return;
-        }
-
-        boardEl.innerHTML = '<div class="sys-msg" style="color: #ff5252;">Clé API manquante dans .env.local</div>';
+        boardEl.innerHTML = '<div class="sys-msg" style="color: #ff5252;">Clé API manquante. Veuillez la configurer dans les réglages.</div>';
         return;
     }
 
@@ -148,12 +220,6 @@ async function fetchSncbJourneys() {
         if (parsed.length === 0) throw new Error();
         displayJourneysBoard(parsed);
     } catch (e) {
-        const fallback = buildDevFallbackJourneys();
-        if (fallback.length > 0) {
-            displayJourneysBoard(fallback, { devFallback: true });
-            return;
-        }
-
         boardEl.innerHTML = '<div class="sys-msg" style="color: #ff5252;">Une erreur réseau est survenue. Veuillez réessayer.</div>';
     }
 }
@@ -184,52 +250,9 @@ function parseJourneys(apiResponse) {
     });
 }
 
-function buildDevFallbackJourneys() {
-    if (!import.meta.env.DEV) {
-        return [];
-    }
-
-    return fakeJourneys.map(item => {
-        const departureTime = buildSncfDateTime(item.departureOffsetMinutes);
-        const arrivalTime = buildSncfDateTime(item.departureOffsetMinutes + item.durationMinutes);
-
-        return {
-            departureTime,
-            arrivalTime,
-            direction: item.direction,
-            headsign: item.headsign,
-            isAutocar: item.isAutocar,
-            isDelayed: item.isDelayed
-        };
-    });
-}
-
-function buildSncfDateTime(offsetMinutes) {
-    const date = new Date(Date.now() + offsetMinutes * 60000);
-    const year = date.getFullYear();
-    const month = padNumber(date.getMonth() + 1, 2);
-    const day = padNumber(date.getDate(), 2);
-    const hours = padNumber(date.getHours(), 2);
-    const minutes = padNumber(date.getMinutes(), 2);
-    const seconds = padNumber(date.getSeconds(), 2);
-
-    return `${year}${month}${day}T${hours}${minutes}${seconds}`;
-}
-
-function padNumber(value, length) {
-    return String(value).padStart(length, '0');
-}
-
 function displayJourneysBoard(departures, options = {}) {
     const boardEl = document.getElementById('journeys-board');
     boardEl.innerHTML = '';
-
-    if (options.devFallback) {
-        const fallbackNotice = document.createElement('div');
-        fallbackNotice.className = 'sys-msg dev-fallback-msg';
-        fallbackNotice.textContent = 'Mode développement : données factices affichées car la source API n’est pas disponible.';
-        boardEl.appendChild(fallbackNotice);
-    }
 
     if (departures.length === 0) {
         boardEl.innerHTML = '<div class="sys-msg">Aucun itinéraire trouvé.</div>';
@@ -251,7 +274,6 @@ function displayJourneysBoard(departures, options = {}) {
         const clockArr = formatSncfClockTime(item.arrivalTime);
         const duration = computeDuration(item.departureTime, item.arrivalTime);
 
-        // Choose correct icon based on transport mode
         const modeIcon = item.isAutocar ? iconBus({ size: 12 }) : iconTrain({ size: 12 });
         const modeLabel = item.isAutocar ? 'Autocar' : 'Train';
 
@@ -276,10 +298,6 @@ function displayJourneysBoard(departures, options = {}) {
     });
 }
 
-/**
- * Computes duration between SNCF datetime strings (YYYYMMDDTHHMMSS format)
- * and returns a human-readable French string like "1h 22min".
- */
 function computeDuration(departureRaw, arrivalRaw) {
     if (!departureRaw || !arrivalRaw) return "--";
     try {
@@ -318,7 +336,12 @@ function initAutocomplete() {
         }
 
         suggestionTimeout = setTimeout(async () => {
-            const apiKey = import.meta.env.VITE_SNCF_API_KEY;
+            const apiKey = getApiKey();
+            if (!apiKey) {
+                box.style.display = 'none';
+                return;
+            }
+
             const url = `${API_PLACES_URL}?q=${encodeURIComponent(query)}&type=stop_area&count=5`;
             try {
                 const r = await fetch(url, { headers: { 'Authorization': apiKey } });
@@ -398,7 +421,6 @@ function initBoardControls() {
 function triggerStarAnimation() {
     const btn = document.getElementById('quick-fav-btn');
     btn.classList.remove('animate-star');
-    // Force reflow to restart animation
     void btn.offsetWidth;
     btn.classList.add('animate-star');
     btn.addEventListener('animationend', () => {
@@ -422,7 +444,6 @@ function updateQuickFavBadge() {
         quickFavBtn.setAttribute('aria-label', "Définir ce trajet comme favori par défaut");
     }
 
-    // Update the star icon inline (filled vs outline)
     if (iconPlaceholder) {
         const size = parseInt(iconPlaceholder.dataset.size, 10) || 24;
         iconPlaceholder.innerHTML = iconStar({ size, className: '', filled: isDefault });
@@ -453,7 +474,10 @@ function transitionToScreen(screenId) {
     document.querySelectorAll('.view-screen').forEach(scr => {
         scr.classList.remove('active');
     });
-    document.getElementById(`view-${screenId}`).classList.add('active');
+    const target = document.getElementById(`view-${screenId}`);
+    if (target) {
+        target.classList.add('active');
+    }
 }
 
 function initTheme() {

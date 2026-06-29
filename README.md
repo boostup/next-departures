@@ -9,11 +9,7 @@ npm install
 npm run dev
 ```
 
-Set your SNCF API key as an environment variable for Vite:
-
-```bash
-export VITE_SNCF_API_KEY="your-key-here"
-```
+Set your SNCF API key when prompted on first launch, or via **Réglages > Clé API SNCF**. Your key is stored locally in your browser and never sent to third parties.
 
 Run tests:
 
