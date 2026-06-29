@@ -3,3 +3,4 @@ purge.sh
 node_modules/
 .vite
 .vscode
+dist
