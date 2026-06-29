@@ -160,6 +160,10 @@ body {
     position: relative;
 }
 
+.autocomplete-container .text-input {
+    width: 100%;
+}
+
 .action-btn,
 .action-btn-accent {
     height: 44px;
