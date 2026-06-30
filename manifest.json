@@ -24,13 +24,13 @@
       "src": "icons/icon-192x192-maskable.png",
       "type": "image/png",
       "sizes": "192x192",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     },
     {
       "src": "icons/icon-512x512-maskable.png",
       "type": "image/png",
       "sizes": "512x512",
-      "purpose": "maskable"
+      "purpose": "any maskable"
     }
   ]
 }
