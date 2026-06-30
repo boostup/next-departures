@@ -24,5 +24,12 @@ npm install
 npm run dev
 ```
 
+## Testing
+
+```bash
+npm test
+npm run test:watch
+```
+
 ## Deployment
 npm run deploy
