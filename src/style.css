@@ -162,6 +162,22 @@ body {
 
 .autocomplete-container .text-input {
     width: 100%;
+    padding-right: 32px;
+}
+
+.dest-clear-btn {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .action-btn,

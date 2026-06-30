@@ -60,4 +60,6 @@ class SearchSettings extends HTMLElement {
     }
 }
 
-customElements.define('search-settings', SearchSettings);
+if (!customElements.get('search-settings')) {
+    customElements.define('search-settings', SearchSettings);
+}

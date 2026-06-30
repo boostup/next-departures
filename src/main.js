@@ -14,7 +14,8 @@ import {
     iconSearch,
     iconClock,
     iconSun,
-    iconMoon
+    iconMoon,
+    iconX
 } from './icons/index.js';
 import { formatSncfClockTime, getFormattedDate, computeDuration, getHaversineDistance, parseJourneys } from './utils.js';
 
@@ -36,7 +37,8 @@ function injectIcons() {
         'search': iconSearch,
         'clock': iconClock,
         'sun': iconSun,
-        'moon': iconMoon
+        'moon': iconMoon,
+        'x': iconX
     };
 
     document.querySelectorAll('.icon-placeholder').forEach(el => {
@@ -272,8 +274,15 @@ function initAutocomplete() {
     const destInput = document.getElementById('dest-input');
     const box = document.getElementById('suggestions-box');
     const okBtn = document.getElementById('search-action-btn');
+    const clearBtn = document.getElementById('dest-clear-btn');
+
+    const updateClearBtn = () => {
+        const visible = destInput.value.trim().length > 0;
+        clearBtn.style.display = visible ? 'inline-flex' : 'none';
+    };
 
     destInput.addEventListener('input', () => {
+        updateClearBtn();
         const query = destInput.value.trim();
         if (suggestionTimeout) clearTimeout(suggestionTimeout);
         if (query.length < 2) {
@@ -316,6 +325,7 @@ function initAutocomplete() {
         if (!item) return;
 
         destInput.value = item.dataset.name;
+        updateClearBtn();
         currentConfig.to = { id: item.dataset.id, name: item.dataset.name };
         box.style.display = 'none';
     });
@@ -323,6 +333,13 @@ function initAutocomplete() {
     okBtn.addEventListener('click', () => {
         box.style.display = 'none';
         fetchSncbJourneys();
+    });
+
+    clearBtn.addEventListener('click', () => {
+        destInput.value = '';
+        box.style.display = 'none';
+        clearBtn.style.display = 'none';
+        destInput.focus();
     });
 
     document.addEventListener('click', (e) => {
