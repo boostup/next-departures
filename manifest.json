@@ -1,6 +1,6 @@
 {
-  "short_name": "SNCF Board",
-  "name": "SNCF Regional Journey Board",
+  "short_name": "Next Departure",
+  "name": "Next Departure",
   "description": "Real-time departure board tracking localized public transportation lines.",
   "start_url": "/",
   "display": "standalone",

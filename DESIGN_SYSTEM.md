@@ -1,6 +1,6 @@
-# SNCF Live Board — Design System
+# Next Departures — Design System
 
-> Design tokens, component patterns, naming conventions, and accessibility guidelines for the SNCF Live Board PWA.
+> Design tokens, component patterns, naming conventions, and accessibility guidelines for the Next Departures PWA.
 
 ---
 
