@@ -2,12 +2,22 @@
   "short_name": "Next Departure",
   "name": "Next Departure",
   "description": "Real-time departure board tracking localized public transportation lines.",
-  "start_url": "/",
+  "start_url": "/next-departures",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#ffffff",
-  "theme_color": "#111827",
+  "background_color": "#0d0e12",
+  "theme_color": "#0d0e12",
   "icons": [
+    {
+      "src": "icons/icon-16x16.png",
+      "type": "image/png",
+      "sizes": "16x16"
+    },
+    {
+      "src": "icons/icon-32x32.png",
+      "type": "image/png",
+      "sizes": "32x32"
+    },
     {
       "src": "icons/icon-192x192.png",
       "type": "image/png",
@@ -19,12 +29,6 @@
       "type": "image/png",
       "sizes": "512x512",
       "purpose": "any"
-    },
-    {
-      "src": "icons/icon-192x192-maskable.png",
-      "type": "image/png",
-      "sizes": "192x192",
-      "purpose": "maskable"
     },
     {
       "src": "icons/icon-512x512-maskable.png",
