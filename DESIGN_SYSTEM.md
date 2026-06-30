@@ -21,6 +21,7 @@
 --status-error: #ff5252;
 --btn-pin: #47a7f5;
 --btn-delete: #ff5252;
+--focus-ring: rgba(71, 167, 245, 0.6);
 ```
 
 #### Light Theme
@@ -36,6 +37,7 @@
 --status-error: #ff5252;
 --btn-pin: #007aff;
 --btn-delete: #ff5252;
+--focus-ring: rgba(0, 122, 255, 0.6);
 ```
 
 ### Typography
@@ -165,7 +167,7 @@ Based on a 4px grid increment:
 - **Data attributes**: camelCase for values (`data-navigate`, `data-action`, `data-index`, `data-target`)
 - **CSS variables**: `--property-name` with `var()` access
 - **Icon files**: `icon-name.js` with `iconName()` export
-- **Components**: Single word, kebab-case HTML tags (`<search-settings>`, `<favorites-manager>`)
+- **Components**: Multi-word, kebab-case HTML tags (`<search-settings>`, `<favorites-manager>`). **Strict Requirement:** Every custom tag *must* include a hyphen (`-`) to guarantee absolute compliance with the W3C Custom Elements specification and prevent native element namespace collisions.
 
 ---
 
@@ -174,7 +176,8 @@ Based on a 4px grid increment:
 - `-webkit-tap-highlight-color: transparent` on body to remove mobile tap flash
 - Touch targets must be ≥44px (applied to all interactive elements)
 - `aria-label` usage on icon-only buttons (title attribute as fallback)
-- Focus-visible outlines for keyboard navigation
+- **Keyboard Navigation:** Focusable elements must utilize custom styling bound to `:focus-visible`, referencing `outline: 2px solid var(--focus-ring); outline-offset: 2px;`. Never suppress the default focus outline without applying this token.
+- **Reduced Motion:** Always wrap complex or spatial animations (such as `.view-screen` slide transitions or star pop sequences) in a `@media (prefers-reduced-motion: reduce)` block to instantly substitute them with immediate transitions or simple opacity changes.
 - Color contrast ratios maintained between text and backgrounds in both themes
 - Semantic HTML structure with proper heading hierarchy (h1 per screen)
 - Back buttons retain visible text labels alongside icons
@@ -240,4 +243,4 @@ Based on a 4px grid increment:
 
 ---
 
-_Last updated: 2026-06-20_
+_Last updated: 2026-06-30_
