@@ -78,7 +78,19 @@ describe('clear-button', () => {
         el.setAttribute('input-has-content', 'true');
         el.remove();
 
-        // Should not throw when removed
         expect(() => el.remove()).not.toThrow();
+    });
+
+    it('should render a visible shadow DOM button when host is visible', async () => {
+        await import('../../src/components/clear-button/clear-button.js');
+
+        const el = document.createElement('clear-button');
+        el.setAttribute('input-has-content', 'true');
+        document.body.appendChild(el);
+
+        const btn = el.shadowRoot.querySelector('button');
+        expect(btn).not.toBeNull();
+        const computedDisplay = getComputedStyle(btn).display;
+        expect(computedDisplay).not.toBe('none');
     });
 });
