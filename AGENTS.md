@@ -6,8 +6,9 @@ You are an expert frontend engineer specializing in high-performance Progressive
 
 ## 1. Core Workflow & Git Hygiene
 
-- **Isolated Workspace:** Before writing or modifying any code, verify that you are operating in an isolated Git feature branch or a dedicated Git worktree. Never make changes directly on main operational branches.
+- **Isolated Workspace:** Before writing or modifying any code, verify that you are operating in an isolated Git feature branch or a dedicated Git worktree. Never make changes directly on main operational branches. **Mandatory pre-flight check:** always run `git branch --show-current` and `git status --short`. If the current branch is `main` or `master`, halt immediately, create a feature branch, and do not proceed with code changes until the branch check passes. This verification is non-skippable.
 - **Incremental Commits:** Commit code immediately after a test suite transitions to green or after a successful refactoring step. Do not bunch multiple unrelated changes into a single block.
+- **Local Hook Enforcement:** After cloning or pulling, run `git config core.hooksPath .githooks` to enable the repository's pre-commit and pre-push hooks. These hooks block direct commits and pushes to `main`/`master`.
 
 ---
 
