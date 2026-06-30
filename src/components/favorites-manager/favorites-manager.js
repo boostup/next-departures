@@ -86,4 +86,6 @@ class FavoritesManager extends HTMLElement {
     }
 }
 
-customElements.define('favorites-manager', FavoritesManager);
+if (!customElements.get('favorites-manager')) {
+    customElements.define('favorites-manager', FavoritesManager);
+}
