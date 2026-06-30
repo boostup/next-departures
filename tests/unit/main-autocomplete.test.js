@@ -19,9 +19,7 @@ describe('initAutocomplete clear button', () => {
                         <div class="autocomplete-container">
                             <input id="dest-input" class="text-input" value="">
                             <div id="suggestions-box" class="suggestions-dropdown"></div>
-                            <button id="dest-clear-btn" class="dest-clear-btn" style="display:none;">
-                                <span class="icon-placeholder" data-icon="x" data-size="16"></span>
-                            </button>
+                            <clear-button id="dest-clear-btn" size="16"></clear-button>
                         </div>
                         <button id="search-action-btn"></button>
                     </div>
@@ -118,7 +116,7 @@ describe('initAutocomplete clear button', () => {
         input.value = '';
         input.dispatchEvent(new Event('input'));
 
-        expect(clearBtn.style.display).toBe('none');
+        expect(clearBtn.getAttribute('input-has-content') !== 'true').toBe(true);
     });
 
     it('should show clear button when input has text', async () => {
@@ -130,7 +128,7 @@ describe('initAutocomplete clear button', () => {
         input.value = 'Paris';
         input.dispatchEvent(new Event('input'));
 
-        expect(clearBtn.style.display).not.toBe('none');
+        expect(clearBtn.getAttribute('input-has-content')).toBe('true');
     });
 
     it('should empty input, hide suggestions, and hide clear button on click', async () => {
@@ -150,7 +148,7 @@ describe('initAutocomplete clear button', () => {
 
         expect(input.value).toBe('');
         expect(suggestionsBox.style.display).toBe('none');
-        expect(clearBtn.style.display).toBe('none');
+        expect(clearBtn.getAttribute('input-has-content')).toBe('false');
     });
 
     it('should keep clear button hidden after clearing empty input', async () => {
@@ -161,10 +159,10 @@ describe('initAutocomplete clear button', () => {
 
         input.value = 'Paris';
         input.dispatchEvent(new Event('input'));
-        expect(clearBtn.style.display).not.toBe('none');
+        expect(clearBtn.getAttribute('input-has-content')).toBe('true');
 
         input.value = '';
         input.dispatchEvent(new Event('input'));
-        expect(clearBtn.style.display).toBe('none');
+        expect(clearBtn.getAttribute('input-has-content')).toBe('false');
     });
 });

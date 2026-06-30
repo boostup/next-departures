@@ -3,6 +3,8 @@ import { currentConfig } from './state.js';
 import { DEFAULT_STATIONS, API_JOURNEYS_URL, API_PLACES_URL } from './constants.js';
 import './components/search-settings/search-settings.js';
 import './components/favorites-manager/favorites-manager.js';
+import './components/journey-card/journey-card.js';
+import './components/clear-button/clear-button.js';
 import {
     iconStar,
     iconCog,
@@ -246,26 +248,14 @@ function displayJourneysBoard(departures, options = {}) {
         const clockArr = formatSncfClockTime(item.arrivalTime);
         const duration = computeDuration(item.departureTime, item.arrivalTime);
 
-        const modeIcon = item.isAutocar ? iconBus({ size: 12 }) : iconTrain({ size: 12 });
-        const modeLabel = item.isAutocar ? 'Autocar' : 'Train';
-
-        const card = document.createElement('div');
-        card.className = 'journey-card';
-        card.innerHTML = `
-            <div class="time-area">
-                <div class="time">${clockDep}</div>
-                <div class="arrival-time">→ ${clockArr}</div>
-                <div class="duration-row">
-                    <span class="duration-icon">${iconClock({ size: 14 })}</span>
-                    <span>${duration}</span>
-                </div>
-            </div>
-            <div class="details">
-                <span class="badge">${modeIcon} ${modeLabel} n° ${item.headsign}</span>
-                <span class="badge">Terminus: ${item.direction}</span>
-                ${item.isDelayed ? '<div class="status-delayed">Retardé</div>' : ''}
-            </div>
-        `;
+        const card = document.createElement('journey-card');
+        card.setAttribute('departure-time', clockDep);
+        card.setAttribute('arrival-time', clockArr);
+        card.setAttribute('duration', duration);
+        card.setAttribute('headsign', item.headsign);
+        card.setAttribute('direction', item.direction);
+        card.setAttribute('is-autocar', item.isAutocar.toString());
+        card.setAttribute('is-delayed', item.isDelayed.toString());
         boardEl.appendChild(card);
     });
 }
@@ -278,7 +268,7 @@ function initAutocomplete() {
 
     const updateClearBtn = () => {
         const visible = destInput.value.trim().length > 0;
-        clearBtn.style.display = visible ? 'inline-flex' : 'none';
+        clearBtn.setAttribute('input-has-content', visible.toString());
     };
 
     destInput.addEventListener('input', () => {
@@ -338,7 +328,7 @@ function initAutocomplete() {
     clearBtn.addEventListener('click', () => {
         destInput.value = '';
         box.style.display = 'none';
-        clearBtn.style.display = 'none';
+        clearBtn.setAttribute('input-has-content', 'false');
         destInput.focus();
     });
 

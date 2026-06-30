@@ -55,3 +55,38 @@ You must approach every code modification through the lens of TDD. Do not skip s
 - When tasked with creating a feature, **always output the test file code first**, followed by instructions on how to run it to observe the failure.
 - If a requested change threatens to add an external npm dependency, halt and propose a pure vanilla JavaScript/Web API alternative first.
 - Explicitly state which files (`README.md`, `DESIGN_SYSTEM.md`) you scanned for alignment after finalizing a code modification block.
+
+---
+
+## 5. Web Component Architecture
+
+### Reusable UI Patterns
+UI-related code involving repetitive patterns or self-contained interactive elements should be extracted into reusable Web Components. This promotes:
+- Encapsulation of behavior and styling
+- Reusability across different views
+- Easier testing and maintenance
+- Consistent patterns with existing components (`search-settings`, `favorites-manager`)
+
+### Separation of Concerns
+Components must remain **decoupled from data-fetching logic**. A Web Component should manage UI behavior only; API integration belongs in the consuming layer.
+
+**Example:** An autocomplete component should accept items via property/attribute assignment or custom events, not fetch data internally. This enables reuse across contexts (stations, cities, saved searches) without duplicating fetching code or creating artificial coupling.
+
+### Component Proposal Workflow
+Before implementing a new component, agents must:
+1. Identify UI patterns suitable for extraction
+2. Propose an implementation plan including:
+   - Component name (must include hyphen per W3C spec)
+   - Attributes/properties interface
+   - Events API for external communication
+   - CSS file requirements
+   - Test file location
+3. Await user review and approval ("PLAN AOK" or equivalent) before proceeding with implementation
+
+### Existing Component Patterns
+Follow the patterns established in `src/components/search-settings/` and `src/components/favorites-manager/`:
+- Shadow DOM encapsulation with `<style>${cssText}</style>${htmlText}`
+- State subscription via `app-state-changed` custom event
+- Proper cleanup in `disconnectedCallback`
+- CSS Custom Properties for theming (use tokens from `DESIGN_SYSTEM.md`)
+- Barrel exports from component directory
