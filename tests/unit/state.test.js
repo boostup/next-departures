@@ -80,6 +80,28 @@ describe('currentConfig localStorage persistence', () => {
         expect(storedItems['sncf_auto_init']).toBe('true');
     });
 
+    it('should persist autocarRoutesEnabled to localStorage', () => {
+        const { currentConfig } = require('../../src/state.js');
+        currentConfig.autocarRoutesEnabled = true;
+
+        expect(storedItems['sncf_autocar_enabled']).toBe('true');
+
+        currentConfig.autocarRoutesEnabled = false;
+
+        expect(storedItems['sncf_autocar_enabled']).toBe('false');
+    });
+
+    it('should persist indirectRoutesEnabled to localStorage', () => {
+        const { currentConfig } = require('../../src/state.js');
+        currentConfig.indirectRoutesEnabled = true;
+
+        expect(storedItems['sncf_indirect_enabled']).toBe('true');
+
+        currentConfig.indirectRoutesEnabled = false;
+
+        expect(storedItems['sncf_indirect_enabled']).toBe('false');
+    });
+
     it('should persist apiKey to localStorage', () => {
         const { currentConfig } = require('../../src/state.js');
         currentConfig.apiKey = 'test-api-key';

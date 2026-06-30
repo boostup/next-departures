@@ -3,11 +3,15 @@ import { DEFAULT_STATIONS } from './constants.js';
 const KEY_FAVORITES = 'sncf_fav_routes';
 const KEY_DEFAULT_ROUTE = 'sncf_def_route';
 const KEY_AUTO_ENABLED = 'sncf_auto_init';
+const KEY_AUTOCAR_ENABLED = 'sncf_autocar_enabled';
+const KEY_INDIRECT_ENABLED = 'sncf_indirect_enabled';
 const KEY_API_KEY = 'sncf_api_key';
 
 const persistedFavs = JSON.parse(localStorage.getItem(KEY_FAVORITES)) || [];
 const persistedDefault = JSON.parse(localStorage.getItem(KEY_DEFAULT_ROUTE)) || null;
 const persistedAuto = localStorage.getItem(KEY_AUTO_ENABLED) === 'true';
+const persistedAutocar = localStorage.getItem(KEY_AUTOCAR_ENABLED) === 'true';
+const persistedIndirect = localStorage.getItem(KEY_INDIRECT_ENABLED) === 'true';
 const persistedApiKey = localStorage.getItem(KEY_API_KEY) || '';
 
 export const currentConfig = new Proxy({
@@ -15,8 +19,8 @@ export const currentConfig = new Proxy({
     to: persistedDefault?.to || DEFAULT_STATIONS.VICHY,
     label: "",
     autoEnabled: persistedAuto,
-    autocarRoutesEnabled: false,
-    indirectRoutesEnabled: false,
+    autocarRoutesEnabled: persistedAutocar,
+    indirectRoutesEnabled: persistedIndirect,
     favorites: persistedFavs,
     defaultRoute: persistedDefault,
     theme: 'dark',
@@ -51,6 +55,12 @@ export const currentConfig = new Proxy({
         }
         if (property === 'autoEnabled') {
             localStorage.setItem(KEY_AUTO_ENABLED, value ? 'true' : 'false');
+        }
+        if (property === 'autocarRoutesEnabled') {
+            localStorage.setItem(KEY_AUTOCAR_ENABLED, value ? 'true' : 'false');
+        }
+        if (property === 'indirectRoutesEnabled') {
+            localStorage.setItem(KEY_INDIRECT_ENABLED, value ? 'true' : 'false');
         }
         if (property === 'apiKey') {
             if (value) {
