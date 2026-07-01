@@ -1,8 +1,4 @@
 export function initNavigationRouter() {
-    document.getElementById('go-settings-btn').addEventListener('click', () => {
-        transitionToScreen('settings');
-    });
-
     document.querySelectorAll('.settings-item').forEach(item => {
         item.addEventListener('click', () => {
             const dest = item.dataset.navigate;
