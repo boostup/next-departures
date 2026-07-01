@@ -1,0 +1,80 @@
+:host {
+    display: block;
+}
+
+.header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    min-height: 44px;
+}
+
+.header-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    min-width: 0;
+}
+
+.route-display {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.origin-station,
+.destination-station {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.route-arrow {
+    margin: 0 2px;
+    flex-shrink: 0;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: color 0.2s;
+    color: var(--text-muted, #8a8f9f);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.icon-btn.active {
+    color: #ffd700;
+}
+
+.settings-gear-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.icon-placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-placeholder svg {
+    display: block;
+}

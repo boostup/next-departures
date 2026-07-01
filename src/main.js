@@ -5,53 +5,18 @@ import './components/search-settings/search-settings.js';
 import './components/favorites-manager/favorites-manager.js';
 import './components/journey-card/journey-card.js';
 import './components/clear-button/clear-button.js';
-import {
-    iconStar,
-    iconCog,
-    iconArrowLeft,
-    iconChevronRight,
-    iconBus,
-    iconTrain,
-    iconRefresh,
-    iconSearch,
-    iconClock,
-    iconSun,
-    iconMoon,
-    iconX
-} from './icons/index.js';
+import './components/auto-complete/auto-complete.js';
+import './components/header-actions/header-actions.js';
+import './components/refresh-button/refresh-button.js';
+import { iconSun, iconMoon, iconStar } from './icons/index.js';
+import { injectIcons } from './utils/icon-injector.js';
+import { initNavigationRouter, transitionToScreen } from './utils/navigation.js';
 import { formatSncfClockTime, getFormattedDate, computeDuration, getHaversineDistance, parseJourneys } from './utils.js';
 
 let suggestionTimeout = null;
 
 function getApiKey() {
     return currentConfig.apiKey || '';
-}
-
-function injectIcons() {
-    const iconMap = {
-        'star': iconStar,
-        'cog': iconCog,
-        'arrow-left': iconArrowLeft,
-        'chevron-right': iconChevronRight,
-        'bus': iconBus,
-        'train': iconTrain,
-        'refresh': iconRefresh,
-        'search': iconSearch,
-        'clock': iconClock,
-        'sun': iconSun,
-        'moon': iconMoon,
-        'x': iconX
-    };
-
-    document.querySelectorAll('.icon-placeholder').forEach(el => {
-        const name = el.dataset.icon;
-        const filled = el.dataset.filled === 'true';
-        const size = parseInt(el.dataset.size, 10) || 20;
-        const iconFn = iconMap[name];
-        if (iconFn) {
-            el.innerHTML = iconFn({ size, className: '', filled });
-        }
-    });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -96,19 +61,38 @@ function showApiKeyGate() {
 
 function initMainApp() {
     initAutocomplete();
-    initBoardControls();
     initApiKeySettings();
 
-    window.addEventListener('app-state-changed', (e) => {
-        const { property, value } = e.detail;
+    const headerActions = document.querySelector('header-actions');
+    const refreshBtn = document.getElementById('manual-refresh-btn');
 
-        if (property === 'label') {
-            document.getElementById('route-display').textContent = value;
-            updateQuickFavBadge();
-        }
-        if (property === 'favorites') {
-            updateQuickFavBadge();
-        }
+    if (headerActions) {
+        headerActions.addEventListener('favorite-click', () => {
+            const currentRouteId = `${currentConfig.from.id}-${currentConfig.to.id}`;
+            const isFav = currentConfig.favorites.some(f => `${f.from.id}-${f.to.id}` === currentRouteId);
+
+            if (isFav) {
+                currentConfig.favorites = currentConfig.favorites.filter(f => `${f.from.id}-${f.to.id}` !== currentRouteId);
+            } else {
+                const newFav = { from: currentConfig.from, to: currentConfig.to, label: currentConfig.label };
+                currentConfig.favorites = [...currentConfig.favorites, newFav];
+            }
+        });
+
+        headerActions.addEventListener('settings-click', () => {
+            transitionToScreen('settings');
+        });
+    }
+
+    if (refreshBtn) {
+        refreshBtn.addEventListener('refresh', () => {
+            fetchSncbJourneys();
+        });
+    }
+
+    window.addEventListener('app-state-changed', (e) => {
+        const { property } = e.detail;
+
         if (property === 'from' || property === 'to' || property === 'autocarRoutesEnabled' || property === 'indirectRoutesEnabled') {
             fetchSncbJourneys();
         }
@@ -120,8 +104,6 @@ function initMainApp() {
         initGeolocationAndProximity();
     }
 
-    document.getElementById('route-display').textContent = currentConfig.label;
-    updateQuickFavBadge();
     transitionToScreen('board');
 }
 
@@ -261,29 +243,26 @@ function displayJourneysBoard(departures, options = {}) {
 }
 
 function initAutocomplete() {
-    const destInput = document.getElementById('dest-input');
-    const box = document.getElementById('suggestions-box');
+    const autoComplete = document.getElementById('dest-autocomplete');
     const okBtn = document.getElementById('search-action-btn');
     const clearBtn = document.getElementById('dest-clear-btn');
 
-    const updateClearBtn = () => {
-        const visible = destInput.value.trim().length > 0;
-        clearBtn.setAttribute('input-has-content', visible.toString());
-    };
+    autoComplete.addEventListener('item-selected', (e) => {
+        currentConfig.to = { id: e.detail.id, name: e.detail.label };
+    });
 
-    destInput.addEventListener('input', () => {
-        updateClearBtn();
-        const query = destInput.value.trim();
+    autoComplete.addEventListener('query-changed', (e) => {
+        const query = e.detail.value.trim();
         if (suggestionTimeout) clearTimeout(suggestionTimeout);
         if (query.length < 2) {
-            box.style.display = 'none';
+            autoComplete.items = [];
             return;
         }
 
         suggestionTimeout = setTimeout(async () => {
             const apiKey = getApiKey();
             if (!apiKey) {
-                box.style.display = 'none';
+                autoComplete.items = [];
                 return;
             }
 
@@ -292,136 +271,24 @@ function initAutocomplete() {
                 const r = await fetch(url, { headers: { 'Authorization': apiKey } });
                 const d = await r.json();
                 const items = d.places || [];
-
-                if (items.length === 0) {
-                    box.style.display = 'none';
-                    return;
-                }
-
-                box.innerHTML = items.map(p => `
-                    <div class="suggestion-item" data-id="${p.id}" data-name="${p.name || p.label}">
-                        ${p.name || p.label}
-                    </div>
-                `).join('');
-                box.style.display = 'block';
+                autoComplete.items = items.map(p => ({
+                    id: p.id,
+                    label: p.name || p.label
+                }));
             } catch (e) {
-                box.style.display = 'none';
+                autoComplete.items = [];
             }
         }, 250);
     });
 
-    box.addEventListener('click', (e) => {
-        const item = e.target.closest('.suggestion-item');
-        if (!item) return;
-
-        destInput.value = item.dataset.name;
-        updateClearBtn();
-        currentConfig.to = { id: item.dataset.id, name: item.dataset.name };
-        box.style.display = 'none';
-    });
-
     okBtn.addEventListener('click', () => {
-        box.style.display = 'none';
+        autoComplete.items = [];
         fetchSncbJourneys();
     });
 
     clearBtn.addEventListener('click', () => {
-        destInput.value = '';
-        box.style.display = 'none';
-        clearBtn.setAttribute('input-has-content', 'false');
-        destInput.focus();
+        autoComplete.items = [];
     });
-
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.autocomplete-container')) {
-            box.style.display = 'none';
-        }
-    });
-}
-
-function initBoardControls() {
-    const manualRefreshBtn = document.getElementById('manual-refresh-btn');
-    const quickFavBtn = document.getElementById('quick-fav-btn');
-
-    manualRefreshBtn.addEventListener('click', () => {
-        fetchSncbJourneys();
-    });
-
-    quickFavBtn.addEventListener('click', () => {
-        const currentRouteId = `${currentConfig.from.id}-${currentConfig.to.id}`;
-        const isFav = currentConfig.favorites.some(f => `${f.from.id}-${f.to.id}` === currentRouteId);
-
-        if (isFav) {
-            currentConfig.favorites = currentConfig.favorites.filter(f => `${f.from.id}-${f.to.id}` !== currentRouteId);
-        } else {
-            const newFav = { from: currentConfig.from, to: currentConfig.to, label: currentConfig.label };
-            currentConfig.favorites = [...currentConfig.favorites, newFav];
-        }
-        updateQuickFavBadge();
-        triggerStarAnimation();
-    });
-}
-
-function triggerStarAnimation() {
-    const btn = document.getElementById('quick-fav-btn');
-    btn.classList.remove('animate-star');
-    void btn.offsetWidth;
-    btn.classList.add('animate-star');
-    btn.addEventListener('animationend', () => {
-        btn.classList.remove('animate-star');
-    }, { once: true });
-}
-
-function updateQuickFavBadge() {
-    const quickFavBtn = document.getElementById('quick-fav-btn');
-    const iconPlaceholder = quickFavBtn.querySelector('.icon-placeholder');
-    const currentRouteId = `${currentConfig.from.id}-${currentConfig.to.id}`;
-    const isFav = currentConfig.favorites.some(f => `${f.from.id}-${f.to.id}` === currentRouteId);
-
-    if (isFav) {
-        quickFavBtn.classList.add('active');
-        quickFavBtn.title = "Retirer ce trajet des favoris";
-        quickFavBtn.setAttribute('aria-label', "Retirer ce trajet des favoris");
-    } else {
-        quickFavBtn.classList.remove('active');
-        quickFavBtn.title = "Ajouter ce trajet aux favoris";
-        quickFavBtn.setAttribute('aria-label', "Ajouter ce trajet aux favoris");
-    }
-
-    if (iconPlaceholder) {
-        const size = parseInt(iconPlaceholder.dataset.size, 10) || 24;
-        iconPlaceholder.innerHTML = iconStar({ size, className: '', filled: isFav });
-    }
-}
-
-function initNavigationRouter() {
-    document.getElementById('go-settings-btn').addEventListener('click', () => {
-        transitionToScreen('settings');
-    });
-
-    document.querySelectorAll('.settings-item').forEach(item => {
-        item.addEventListener('click', () => {
-            const dest = item.dataset.navigate;
-            transitionToScreen(dest);
-        });
-    });
-
-    document.querySelectorAll('.back-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            const dest = btn.dataset.target;
-            transitionToScreen(dest);
-        });
-    });
-}
-
-function transitionToScreen(screenId) {
-    document.querySelectorAll('.view-screen').forEach(scr => {
-        scr.classList.remove('active');
-    });
-    const target = document.getElementById(`view-${screenId}`);
-    if (target) {
-        target.classList.add('active');
-    }
 }
 
 function initTheme() {

@@ -34,32 +34,13 @@
 
         <!-- ÉCRAN PRINCIPAL (TABLEAU DE BORD) -->
         <div id="view-board" class="view-screen">
-            <header class="view-header">
-                <div class="header-main">
-                    <h1 id="route-display">
-                        <span id="origin-station" class="origin-station"></span>
-                        <span class="route-arrow">➔</span>
-                        <span id="destination-station" class="destination-station"></span>
-                    </h1>
-                    <button id="quick-fav-btn" class="icon-btn" title="Définir ce trajet par défaut"
-                        aria-label="Définir ce trajet par défaut">
-                        <span class="icon-placeholder" data-icon="star" data-size="24"></span>
-                    </button>
-                </div>
-                <button id="go-settings-btn" class="settings-gear-btn" title="Réglages"
-                    aria-label="Ouvrir les réglages">
-                    <span class="icon-placeholder" data-icon="cog" data-size="24"></span>
-                </button>
-            </header>
+            <header-actions></header-actions>
 
             <section class="search-section">
                 <div class="input-row">
-                    <div class="autocomplete-container">
-                        <input id="dest-input" class="text-input" placeholder="Où allez-vous ? (ex: Vichy)"
-                            autocomplete="off">
+                    <auto-complete id="dest-autocomplete" placeholder="Où allez-vous ? (ex: Vichy)">
                         <clear-button id="dest-clear-btn" class="dest-clear-btn" size="16"></clear-button>
-                        <div id="suggestions-box" class="suggestions-dropdown"></div>
-                    </div>
+                    </auto-complete>
                     <button id="search-action-btn" class="action-btn" aria-label="Rechercher">
                         <span class="icon-placeholder" data-icon="search" data-size="20"></span>
                     </button>
@@ -72,11 +53,7 @@
                 </div>
             </section>
 
-            <button id="manual-refresh-btn" class="refresh-main-btn">
-                <span class="icon-placeholder" data-icon="refresh" data-size="18"
-                    style="margin-right: 8px; vertical-align: middle;"></span>
-                Actualiser
-            </button>
+            <refresh-button id="manual-refresh-btn"></refresh-button>
         </div>
 
         <!-- ÉCRAN RÉGLAGES PRINCIPAL -->

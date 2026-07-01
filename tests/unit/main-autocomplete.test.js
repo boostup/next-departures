@@ -16,12 +16,9 @@ describe('initAutocomplete clear button', () => {
                         <button id="go-settings-btn"></button>
                     </header>
                     <div class="search-section">
-                        <div class="autocomplete-container">
-                            <input id="dest-input" class="text-input" value="">
-                            <div id="suggestions-box" class="suggestions-dropdown"></div>
-                            <clear-button id="dest-clear-btn" size="16"></clear-button>
+                        <div class="input-row" id="input-row">
+                            <button id="search-action-btn"></button>
                         </div>
-                        <button id="search-action-btn"></button>
                     </div>
                     <button id="manual-refresh-btn"></button>
                 </div>
@@ -67,6 +64,32 @@ describe('initAutocomplete clear button', () => {
         `;
     }
 
+    async function loadMain() {
+        const { currentConfig } = await import('../../src/state.js');
+        currentConfig.apiKey = 'test-api-key';
+        await import('../../src/components/auto-complete/auto-complete.js');
+        await import('../../src/main.js');
+        setupAutocomplete();
+        document.dispatchEvent(new Event('DOMContentLoaded'));
+        return { currentConfig };
+    }
+
+    function setupAutocomplete() {
+        const inputRow = document.getElementById('input-row');
+        const autoComplete = document.createElement('auto-complete');
+        autoComplete.id = 'dest-autocomplete';
+        autoComplete.setAttribute('placeholder', 'Où allez-vous ? (ex: Vichy)');
+        
+        const clearBtn = document.createElement('clear-button');
+        clearBtn.id = 'dest-clear-btn';
+        clearBtn.setAttribute('size', '16');
+        
+        autoComplete.appendChild(clearBtn);
+        inputRow.insertBefore(autoComplete, document.getElementById('search-action-btn'));
+        
+        return autoComplete;
+    }
+
     beforeEach(() => {
         vi.stubGlobal('localStorage', {
             getItem: (key) => storedItems[key] || null,
@@ -99,18 +122,11 @@ describe('initAutocomplete clear button', () => {
         Object.keys(storedItems).forEach(k => delete storedItems[k]);
     });
 
-    async function loadMain() {
-        const { currentConfig } = await import('../../src/state.js');
-        currentConfig.apiKey = 'test-api-key';
-        await import('../../src/main.js');
-        document.dispatchEvent(new Event('DOMContentLoaded'));
-        return { currentConfig };
-    }
-
     it('should keep clear button hidden when input is empty', async () => {
         await loadMain();
 
-        const input = document.getElementById('dest-input');
+        const autoComplete = document.getElementById('dest-autocomplete');
+        const input = autoComplete.shadowRoot.getElementById('autocomplete-input');
         const clearBtn = document.getElementById('dest-clear-btn');
 
         input.value = '';
@@ -122,7 +138,8 @@ describe('initAutocomplete clear button', () => {
     it('should show clear button when input has text', async () => {
         await loadMain();
 
-        const input = document.getElementById('dest-input');
+        const autoComplete = document.getElementById('dest-autocomplete');
+        const input = autoComplete.shadowRoot.getElementById('autocomplete-input');
         const clearBtn = document.getElementById('dest-clear-btn');
 
         input.value = 'Paris';
@@ -134,27 +151,32 @@ describe('initAutocomplete clear button', () => {
     it('should empty input, hide suggestions, and hide clear button on click', async () => {
         await loadMain();
 
-        const input = document.getElementById('dest-input');
+        const autoComplete = document.getElementById('dest-autocomplete');
+        const input = autoComplete.shadowRoot.getElementById('autocomplete-input');
         const clearBtn = document.getElementById('dest-clear-btn');
-        const suggestionsBox = document.getElementById('suggestions-box');
 
         input.value = 'Paris';
         input.dispatchEvent(new Event('input'));
 
-        suggestionsBox.innerHTML = '<div class="suggestion-item">Paris Gare de Lyon</div>';
-        suggestionsBox.style.display = 'block';
+        autoComplete.items = [
+            { id: 'stop_area:SNCF:123456', label: 'Paris Gare de Lyon' }
+        ];
+
+        const dropdown = autoComplete.shadowRoot.getElementById('suggestions-dropdown');
+        expect(dropdown.style.display).toBe('block');
 
         clearBtn.click();
 
         expect(input.value).toBe('');
-        expect(suggestionsBox.style.display).toBe('none');
+        expect(dropdown.style.display).toBe('none');
         expect(clearBtn.getAttribute('input-has-content')).toBe('false');
     });
 
     it('should keep clear button hidden after clearing empty input', async () => {
         await loadMain();
 
-        const input = document.getElementById('dest-input');
+        const autoComplete = document.getElementById('dest-autocomplete');
+        const input = autoComplete.shadowRoot.getElementById('autocomplete-input');
         const clearBtn = document.getElementById('dest-clear-btn');
 
         input.value = 'Paris';

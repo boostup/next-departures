@@ -228,7 +228,30 @@ Based on a 4px grid increment:
 │   │   ├── icon-clock.js
 │   │   ├── icon-refresh.js
 │   │   └── icon-search.js
+│   ├── utils/               # Shared utilities
+│   │   ├── icon-injector.js
+│   │   └── navigation.js
 │   ├── components/
+│   │   ├── clear-button/
+│   │   │   ├── clear-button.js
+│   │   │   ├── clear-button.html
+│   │   │   └── clear-button.css
+│   │   ├── journey-card/
+│   │   │   ├── journey-card.js
+│   │   │   ├── journey-card.html
+│   │   │   └── journey-card.css
+│   │   ├── auto-complete/
+│   │   │   ├── auto-complete.js
+│   │   │   ├── auto-complete.html
+│   │   │   └── auto-complete.css
+│   │   ├── header-actions/
+│   │   │   ├── header-actions.js
+│   │   │   ├── header-actions.html
+│   │   │   └── header-actions.css
+│   │   ├── refresh-button/
+│   │   │   ├── refresh-button.js
+│   │   │   ├── refresh-button.html
+│   │   │   └── refresh-button.css
 │   │   ├── search-settings/
 │   │   │   ├── search-settings.js
 │   │   │   ├── search-settings.html
@@ -239,6 +262,19 @@ Based on a 4px grid increment:
 │   │       └── favorites-manager.css
 │   └── assets/
 │       └── (icon PNGs for PWA)
+├── tests/
+│   └── unit/
+│       ├── state.test.js
+│       ├── constants.test.js
+│       ├── main-utils.test.js
+│       ├── main-autocomplete.test.js
+│       ├── clear-button.test.js
+│       ├── journey-card.test.js
+│       ├── auto-complete.test.js
+│       ├── header-actions.test.js
+│       ├── refresh-button.test.js
+│       ├── search-settings.test.js
+│       └── favorites-manager.test.js
 ```
 
 ---

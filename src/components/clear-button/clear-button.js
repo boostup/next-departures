@@ -44,7 +44,7 @@ class ClearButton extends HTMLElement {
         btn.addEventListener('click', () => {
             this.setAttribute('input-has-content', 'false');
             this.updateVisibility();
-            this.dispatchEvent(new CustomEvent('clear'));
+            this.dispatchEvent(new CustomEvent('clear', { bubbles: true, composed: true }));
         });
     }
 

@@ -1,0 +1,39 @@
+:host {
+    display: block;
+    width: 100%;
+}
+
+.refresh-btn {
+    width: 100%;
+    background: var(--accent-gradient, linear-gradient(135deg, #47a7f5, #2670e8));
+    color: #ffffff;
+    border: none;
+    padding: 14px;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: inherit;
+}
+
+.refresh-btn:hover {
+    opacity: 0.9;
+}
+
+.icon-placeholder {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-placeholder svg {
+    display: block;
+}
+
+.label {
+    line-height: 1;
+}
