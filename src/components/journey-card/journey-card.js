@@ -1,4 +1,6 @@
 import { iconBus, iconTrain, iconClock } from '../../icons/index.js';
+import htmlText from './journey-card.html?raw';
+import cssText from './journey-card.css?inline';
 
 class JourneyCard extends HTMLElement {
     constructor() {
@@ -29,106 +31,46 @@ class JourneyCard extends HTMLElement {
         const isAutocar = this.getAttribute('is-autocar') === 'true';
         const isDelayed = this.getAttribute('is-delayed') === 'true';
 
+        this.shadowRoot.innerHTML = `<style>${cssText}</style>${htmlText}`;
+
+        this.shadowRoot.getElementById('departure-time').textContent = departureTime;
+
+        const arrivalSpan = this.shadowRoot.querySelector('.arrival-value');
+        arrivalSpan.textContent = arrivalTime;
+
+        this.shadowRoot.getElementById('duration-value').textContent = duration;
+        const durationIcon = this.shadowRoot.getElementById('duration-icon');
+        durationIcon.innerHTML = iconClock({ size: 14 });
+
         const modeIcon = isAutocar ? iconBus({ size: 12 }) : iconTrain({ size: 12 });
         const modeLabel = isAutocar ? 'Autocar' : 'Train';
+        const modeBadge = this.shadowRoot.getElementById('mode-badge');
+        modeBadge.innerHTML = `${modeIcon} ${modeLabel} n° ${headsign}`;
 
-        this.shadowRoot.innerHTML = `
-            <style>
-                .journey-card {
-                    background-color: var(--card-color, #161822);
-                    border-radius: 14px;
-                    padding: 16px;
-                    margin-bottom: 10px;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: flex-start;
-                    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
-                }
+        const terminusBadge = this.shadowRoot.getElementById('terminus-badge');
+        terminusBadge.textContent = `Terminus: ${direction}`;
 
-                .time-area {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 2px;
-                }
+        this.renderDelayedStatus(isDelayed);
+    }
 
-                .time {
-                    font-size: 1.8rem;
-                    font-weight: 800;
-                    letter-spacing: -0.5px;
-                    line-height: 1;
-                    color: var(--text-main, #ffffff);
-                }
+    renderDelayedStatus(isDelayed) {
+        const details = this.shadowRoot.querySelector('.details');
+        let delayedEl = details.querySelector('.status-delayed');
 
-                .arrival-time {
-                    font-size: 0.8rem;
-                    color: var(--text-muted, #8a8f9f);
-                    display: flex;
-                    align-items: center;
-                    gap: 4px;
-                }
-
-                .arrival-time svg {
-                    flex-shrink: 0;
-                }
-
-                .duration-row {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                    font-size: 0.8rem;
-                    color: var(--text-muted, #8a8f9f);
-                    margin-top: 6px;
-                }
-
-                .duration-icon {
-                    display: inline-flex;
-                    align-items: center;
-                }
-
-                .details {
-                    text-align: right;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 4px;
-                    flex-shrink: 0;
-                }
-
-                .badge {
-                    align-self: flex-end;
-                    font-size: 0.7rem;
-                    background: rgba(255, 255, 255, 0.08);
-                    padding: 3px 6px;
-                    border-radius: 5px;
-                    color: var(--text-muted, #8a8f9f);
-                    font-weight: 600;
-                    display: inline-flex;
-                    align-items: center;
-                    gap: 4px;
-                    white-space: nowrap;
-                }
-
-                .status-delayed {
-                    font-size: 0.8rem;
-                    color: #ff5252;
-                    font-weight: 600;
-                }
-            </style>
-            <div class="journey-card">
-                <div class="time-area">
-                    <div class="time">${departureTime}</div>
-                    <div class="arrival-time">→ ${arrivalTime}</div>
-                    <div class="duration-row">
-                        <span class="duration-icon">${iconClock({ size: 14 })}</span>
-                        <span>${duration}</span>
-                    </div>
-                </div>
-                <div class="details">
-                    <span class="badge">${modeIcon} ${modeLabel} n° ${headsign}</span>
-                    <span class="badge">Terminus: ${direction}</span>
-                    ${isDelayed ? '<div class="status-delayed">Retardé</div>' : ''}
-                </div>
-            </div>
-        `;
+        if (isDelayed) {
+            if (!delayedEl) {
+                delayedEl = document.createElement('div');
+                delayedEl.className = 'status-delayed';
+                delayedEl.textContent = 'Retardé';
+                details.appendChild(delayedEl);
+            } else {
+                delayedEl.style.display = 'block';
+            }
+        } else {
+            if (delayedEl) {
+                delayedEl.remove();
+            }
+        }
     }
 }
 

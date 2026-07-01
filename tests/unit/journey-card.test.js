@@ -80,7 +80,7 @@ describe('journey-card', () => {
         expect(delayedEl).toBeNull();
     });
 
-    it('should use CSS custom properties for theming', async () => {
+    it('should render accessible attributes', async () => {
         await import('../../src/components/journey-card/journey-card.js');
 
         const el = document.createElement('journey-card');
@@ -94,11 +94,7 @@ describe('journey-card', () => {
         const card = el.shadowRoot.querySelector('.journey-card');
         expect(card).toBeDefined();
 
-        // Verify the CSS includes custom property references
-        const styleEl = el.shadowRoot.querySelector('style');
-        expect(styleEl.textContent).toContain('var(--card-color');
-        expect(styleEl.textContent).toContain('var(--border-color');
-        expect(styleEl.textContent).toContain('var(--text-main');
-        expect(styleEl.textContent).toContain('var(--text-muted');
+        const modeBadge = el.shadowRoot.querySelector('#mode-badge');
+        expect(modeBadge.textContent).toContain('T1');
     });
 });

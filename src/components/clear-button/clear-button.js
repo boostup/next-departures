@@ -1,4 +1,6 @@
 import { iconX } from '../../icons/index.js';
+import htmlText from './clear-button.html?raw';
+import cssText from './clear-button.css?inline';
 
 class ClearButton extends HTMLElement {
     constructor() {
@@ -19,36 +21,22 @@ class ClearButton extends HTMLElement {
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
-        if (this._connected) {
+        if (name === 'size' && this._connected) {
+            this.renderIcon();
+        } else if (this._connected) {
             this.updateVisibility();
         }
     }
 
     render() {
-        this.shadowRoot.innerHTML = `
-            <style>
-                button {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    width: 32px;
-                    height: 32px;
-                    padding: 0;
-                    margin: 0;
-                    background: none;
-                    border: none;
-                    color: var(--text-muted, #8a8f9f);
-                    cursor: pointer;
-                    border-radius: 8px;
-                }
-                button:hover {
-                    background: rgba(255, 255, 255, 0.08);
-                }
-            </style>
-            <button type="button" aria-label="Effacer">
-                ${iconX({ size: this.size })}
-            </button>
-        `;
+        this.shadowRoot.innerHTML = `<style>${cssText}</style>${htmlText}`;
+        this.renderIcon();
+        this.bindEvents();
+    }
+
+    renderIcon() {
+        const btn = this.shadowRoot.querySelector('button');
+        btn.innerHTML = iconX({ size: this.size });
     }
 
     bindEvents() {

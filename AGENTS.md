@@ -90,3 +90,10 @@ Follow the patterns established in `src/components/search-settings/` and `src/co
 - Proper cleanup in `disconnectedCallback`
 - CSS Custom Properties for theming (use tokens from `DESIGN_SYSTEM.md`)
 - Barrel exports from component directory
+
+### Component File Structure
+- **HTML templates and CSS must be in separate files**, not inline string values in the component JavaScript.
+- HTML templates should use the `.html` extension with `?raw` Vite query for raw text import.
+- CSS files should use the `.css` extension with `?inline` Vite query to prevent injection.
+- This separation enables IDE code completion, syntax highlighting, and better maintainability.
+- Static HTML should go in `.html` files; dynamic HTML generation (e.g., lists) remains in JS but references external templates where applicable.
