@@ -206,7 +206,7 @@ Based on a 4px grid increment:
 ├── sw.js
 ├── manifest.json
 ├── src/
-│   ├── main.js             # App bootstrap, navigation, journey display
+│   ├── main.js             # App bootstrap, journey display
 │   ├── style.css            # Global styles + tokens
 │   ├── constants.js         # API URLs, default stations
 │   ├── state.js             # Reactive state with Proxy
@@ -229,8 +229,7 @@ Based on a 4px grid increment:
 │   │   ├── icon-refresh.js
 │   │   └── icon-search.js
 │   ├── utils/               # Shared utilities
-│   │   ├── icon-injector.js
-│   │   └── navigation.js
+│   │   └── icon-injector.js
 │   ├── components/
 │   │   ├── clear-button/
 │   │   │   ├── clear-button.js
@@ -256,10 +255,14 @@ Based on a 4px grid increment:
 │   │   │   ├── search-settings.js
 │   │   │   ├── search-settings.html
 │   │   │   └── search-settings.css
-│   │   └── favorites-manager/
-│   │       ├── favorites-manager.js
-│   │       ├── favorites-manager.html
-│   │       └── favorites-manager.css
+│   │   ├── favorites-manager/
+│   │   │   ├── favorites-manager.js
+│   │   │   ├── favorites-manager.html
+│   │   │   └── favorites-manager.css
+│   │   └── screen-manager/
+│   │       ├── screen-manager.js
+│   │       ├── screen-manager.html
+│   │       └── screen-manager.css
 │   └── assets/
 │       └── (icon PNGs for PWA)
 ├── tests/
@@ -268,6 +271,8 @@ Based on a 4px grid increment:
 │       ├── constants.test.js
 │       ├── main-utils.test.js
 │       ├── main-autocomplete.test.js
+│       ├── main-launch.test.js
+│       ├── screen-manager.test.js
 │       ├── clear-button.test.js
 │       ├── journey-card.test.js
 │       ├── auto-complete.test.js
@@ -277,6 +282,4 @@ Based on a 4px grid increment:
 │       └── favorites-manager.test.js
 ```
 
----
-
-_Last updated: 2026-06-30_
+_Last updated: 2026-07-01_

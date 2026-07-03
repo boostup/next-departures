@@ -6,60 +6,62 @@ describe('initAutocomplete clear button', () => {
     function setupDom() {
         document.body.innerHTML = `
             <div class="app-layout">
-                <div id="view-board" class="view-screen active">
-                    <div id="journeys-board"></div>
-                    <header class="view-header">
-                        <h1 id="route-display"></h1>
-                        <button id="quick-fav-btn" class="icon-btn">
-                            <span class="icon-placeholder" data-icon="star" data-size="24"></span>
-                        </button>
-                        <button id="go-settings-btn"></button>
-                    </header>
-                    <div class="search-section">
-                        <div class="input-row" id="input-row">
-                            <button id="search-action-btn"></button>
+                <screen-manager>
+                    <div id="view-board" class="view-screen active">
+                        <div id="journeys-board"></div>
+                        <header class="view-header">
+                            <h1 id="route-display"></h1>
+                            <button id="quick-fav-btn" class="icon-btn">
+                                <span class="icon-placeholder" data-icon="star" data-size="24"></span>
+                            </button>
+                            <button id="go-settings-btn"></button>
+                        </header>
+                        <div class="search-section">
+                            <div class="input-row" id="input-row">
+                                <button id="search-action-btn"></button>
+                            </div>
                         </div>
+                        <button id="manual-refresh-btn"></button>
                     </div>
-                    <button id="manual-refresh-btn"></button>
-                </div>
-                <div id="view-settings" class="view-screen">
-                    <header class="view-header">
-                        <button class="back-btn" data-target="board"></button>
-                        <h1>Réglages</h1>
-                        <div style="width: 44px;"></div>
-                    </header>
-                    <ul class="settings-list">
-                        <li class="settings-item" data-navigate="settings-favorites"></li>
-                        <li class="settings-item" data-navigate="settings-filters"></li>
-                        <li class="settings-item-static">
-                            <span class="item-icon"><span class="icon-placeholder" data-icon="sun" data-size="22"></span></span>
-                            <span class="item-label">Mode Sombre</span>
-                            <label class="switch">
-                                <input id="theme-toggle" type="checkbox">
-                                <span class="slider"></span>
-                            </label>
-                        </li>
-                        <li class="settings-item" data-navigate="settings-api-key"></li>
-                    </ul>
-                </div>
-                <div id="view-settings-favorites" class="view-screen"><favorites-manager></favorites-manager></div>
-                <div id="view-settings-filters" class="view-screen"><search-settings></search-settings></div>
-                <div id="view-settings-api-key" class="view-screen">
-                    <header class="view-header">
-                        <button class="back-btn" data-target="settings"></button>
-                        <h1>Clé API SNCF</h1>
-                        <div style="width: 44px;"></div>
-                    </header>
-                    <input id="api-key-settings-input">
-                    <button id="api-key-settings-save"></button>
-                    <button id="api-key-clear-btn"></button>
-                    <p id="api-key-settings-msg" style="display:none;"></p>
-                </div>
-                <div id="view-api-key" class="view-screen">
-                    <input id="api-key-input">
-                    <button id="api-key-submit"></button>
-                    <p id="api-key-error" style="display:none;"></p>
-                </div>
+                    <div id="view-settings" class="view-screen">
+                        <header class="view-header">
+                            <button class="back-btn" data-target="board"></button>
+                            <h1>Réglages</h1>
+                            <div style="width: 44px;"></div>
+                        </header>
+                        <ul class="settings-list">
+                            <li class="settings-item" data-navigate="settings-favorites"></li>
+                            <li class="settings-item" data-navigate="settings-filters"></li>
+                            <li class="settings-item-static">
+                                <span class="item-icon"><span class="icon-placeholder" data-icon="sun" data-size="22"></span></span>
+                                <span class="item-label">Mode Sombre</span>
+                                <label class="switch">
+                                    <input id="theme-toggle" type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </li>
+                            <li class="settings-item" data-navigate="settings-api-key"></li>
+                        </ul>
+                    </div>
+                    <div id="view-settings-favorites" class="view-screen"><favorites-manager></favorites-manager></div>
+                    <div id="view-settings-filters" class="view-screen"><search-settings></search-settings></div>
+                    <div id="view-settings-api-key" class="view-screen">
+                        <header class="view-header">
+                            <button class="back-btn" data-target="settings"></button>
+                            <h1>Clé API SNCF</h1>
+                            <div style="width: 44px;"></div>
+                        </header>
+                        <input id="api-key-settings-input">
+                        <button id="api-key-settings-save"></button>
+                        <button id="api-key-clear-btn"></button>
+                        <p id="api-key-settings-msg" style="display:none;"></p>
+                    </div>
+                    <div id="view-api-key" class="view-screen">
+                        <input id="api-key-input">
+                        <button id="api-key-submit"></button>
+                        <p id="api-key-error" style="display:none;"></p>
+                    </div>
+                </screen-manager>
             </div>
         `;
     }
@@ -67,6 +69,7 @@ describe('initAutocomplete clear button', () => {
     async function loadMain() {
         const { currentConfig } = await import('../../src/state.js');
         currentConfig.apiKey = 'test-api-key';
+        await import('../../src/components/screen-manager/screen-manager.js');
         await import('../../src/components/auto-complete/auto-complete.js');
         await import('../../src/main.js');
         setupAutocomplete();

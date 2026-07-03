@@ -13,152 +13,153 @@
 
 <body>
     <div id="app" class="app-layout">
-
-        <!-- ÉCRAN VERROUILLAGE CLÉ API -->
-        <div id="view-api-key" class="view-screen active">
-            <div class="key-lock-content">
-                <div class="key-lock-icon">
-                    <span class="icon-placeholder" data-icon="cog" data-size="48"></span>
-                </div>
-                <h1>Clé API requise</h1>
-                <p class="key-lock-desc">Veuillez entrer votre clé API SNCF pour accéder à l'application.</p>
-                <div class="key-input-row">
-                    <input id="api-key-input" class="text-input key-input" type="password"
-                        placeholder="Votre clé API SNCF" autocomplete="off">
-                    <button id="api-key-submit" class="action-btn-accent">Valider</button>
-                </div>
-                <p id="api-key-error" class="key-error-msg" style="display:none;">Veuillez entrer une clé API valide.
-                </p>
-                <p class="api-key-help">
-                    <a href="https://numerique.sncf.com/inscription/" target="_blank" rel="noopener noreferrer">
-                        Obtenir une clé API SNCF
-                    </a>
-                </p>
-            </div>
-        </div>
-
-        <!-- ÉCRAN PRINCIPAL (TABLEAU DE BORD) -->
-        <div id="view-board" class="view-screen">
-            <header-actions></header-actions>
-
-            <section class="search-section">
-                <div class="input-row">
-                    <auto-complete id="dest-autocomplete" placeholder="Où allez-vous ? (ex: Vichy)">
-                        <clear-button id="dest-clear-btn" class="dest-clear-btn" size="16"></clear-button>
-                    </auto-complete>
-                    <button id="search-action-btn" class="action-btn" aria-label="Rechercher">
-                        <span class="icon-placeholder" data-icon="search" data-size="20"></span>
-                    </button>
-                </div>
-            </section>
-
-            <section class="board-section">
-                <div id="journeys-board">
-                    <div class="sys-msg">Initialisation du tableau des départs...</div>
-                </div>
-            </section>
-
-            <refresh-button id="manual-refresh-btn"></refresh-button>
-        </div>
-
-        <!-- ÉCRAN RÉGLAGES PRINCIPAL -->
-        <div id="view-settings" class="view-screen">
-            <header class="view-header">
-                <button class="back-btn" data-target="board">
-                    <span class="icon-placeholder" data-icon="arrow-left" data-size="18"></span>
-                    Retour
-                </button>
-                <h1>Réglages</h1>
-                <div style="width: 44px;"></div>
-            </header>
-
-            <ul class="settings-list">
-                <li class="settings-item" data-navigate="settings-favorites">
-                    <span class="item-icon"><span class="icon-placeholder" data-icon="star" data-filled="true"
-                            data-size="22"></span></span>
-                    <span class="item-label">Trajets favoris</span>
-                    <span class="item-accessory"><span class="icon-placeholder" data-icon="chevron-right"
-                            data-size="18"></span></span>
-                </li>
-                <li class="settings-item" data-navigate="settings-filters">
-                    <span class="item-icon"><span class="icon-placeholder" data-icon="cog" data-size="22"></span></span>
-                    <span class="item-label">Filtres de recherche</span>
-                    <span class="item-accessory"><span class="icon-placeholder" data-icon="chevron-right"
-                            data-size="18"></span></span>
-                </li>
-                <li class="settings-item-static">
-                    <span class="item-icon"><span class="icon-placeholder" data-icon="sun" data-size="22"></span></span>
-                    <span class="item-label">Mode Sombre</span>
-                    <label class="switch">
-                        <input id="theme-toggle" type="checkbox">
-                        <span class="slider"></span>
-                    </label>
-                </li>
-                <li class="settings-item" data-navigate="settings-api-key">
-                    <span class="item-icon"><span class="icon-placeholder" data-icon="cog" data-size="22"></span></span>
-                    <span class="item-label">Clé API SNCF</span>
-                    <span class="item-accessory"><span class="icon-placeholder" data-icon="chevron-right"
-                            data-size="18"></span></span>
-                </li>
-            </ul>
-        </div>
-
-        <!-- SOUS-ÉCRAN CLÉ API -->
-        <div id="view-settings-api-key" class="view-screen">
-            <header class="view-header">
-                <button class="back-btn" data-target="settings">
-                    <span class="icon-placeholder" data-icon="arrow-left" data-size="18"></span>
-                    Réglages
-                </button>
-                <h1>Clé API SNCF</h1>
-                <div style="width: 44px;"></div>
-            </header>
-            <div class="view-content">
-                <div class="api-key-settings-card">
-                    <p class="api-key-desc">Votre clé API est stockée localement dans votre navigateur. Elle n'est
-                        jamais transmise à des tiers.</p>
-                    <div class="key-input-row-vertical">
-                        <input id="api-key-settings-input" class="text-input key-input" type="password"
-                            placeholder="Clé API SNCF" autocomplete="off">
-                        <button id="api-key-settings-save"
-                            class="action-btn-accent api-key-save-btn">Enregistrer</button>
+        <screen-manager>
+            <!-- ÉCRAN VERROUILLAGE CLÉ API -->
+            <div id="view-api-key" class="view-screen active">
+                <div class="key-lock-content">
+                    <div class="key-lock-icon">
+                        <span class="icon-placeholder" data-icon="cog" data-size="48"></span>
                     </div>
-                    <p id="api-key-settings-msg" class="key-settings-msg" style="display:none;"></p>
-                    <button id="api-key-clear-btn" class="text-btn-danger">Supprimer la clé</button>
+                    <h1>Clé API requise</h1>
+                    <p class="key-lock-desc">Veuillez entrer votre clé API SNCF pour accéder à l'application.</p>
+                    <div class="key-input-row">
+                        <input id="api-key-input" class="text-input key-input" type="password"
+                            placeholder="Votre clé API SNCF" autocomplete="off">
+                        <button id="api-key-submit" class="action-btn-accent">Valider</button>
+                    </div>
+                    <p id="api-key-error" class="key-error-msg" style="display:none;">Veuillez entrer une clé API valide.
+                    </p>
+                    <p class="api-key-help">
+                        <a href="https://numerique.sncf.com/inscription/" target="_blank" rel="noopener noreferrer">
+                            Obtenir une clé API SNCF
+                        </a>
+                    </p>
                 </div>
             </div>
-        </div>
 
-        <!-- SOUS-ÉCRAN FAVORIS -->
-        <div id="view-settings-favorites" class="view-screen">
-            <header class="view-header">
-                <button class="back-btn" data-target="settings">
-                    <span class="icon-placeholder" data-icon="arrow-left" data-size="18"></span>
-                    Réglages
-                </button>
-                <h1>Favoris</h1>
-                <div style="width: 44px;"></div>
-            </header>
-            <div class="view-content">
-                <favorites-manager></favorites-manager>
+            <!-- ÉCRAN PRINCIPAL (TABLEAU DE BORD) -->
+            <div id="view-board" class="view-screen">
+                <header-actions></header-actions>
+
+                <section class="search-section">
+                    <div class="input-row">
+                        <auto-complete id="dest-autocomplete" placeholder="Où allez-vous ? (ex: Vichy)">
+                            <clear-button id="dest-clear-btn" class="dest-clear-btn" size="16"></clear-button>
+                        </auto-complete>
+                        <button id="search-action-btn" class="action-btn" aria-label="Rechercher">
+                            <span class="icon-placeholder" data-icon="search" data-size="20"></span>
+                        </button>
+                    </div>
+                </section>
+
+                <section class="board-section">
+                    <div id="journeys-board">
+                        <div class="sys-msg">Initialisation du tableau des départs...</div>
+                    </div>
+                </section>
+
+                <refresh-button id="manual-refresh-btn"></refresh-button>
             </div>
-        </div>
 
-        <!-- SOUS-ÉCRAN FILTRES -->
-        <div id="view-settings-filters" class="view-screen">
-            <header class="view-header">
-                <button class="back-btn" data-target="settings">
-                    <span class="icon-placeholder" data-icon="arrow-left" data-size="18"></span>
-                    Réglages
-                </button>
-                <h1>Filtres</h1>
-                <div style="width: 44px;"></div>
-            </header>
-            <div class="view-content">
-                <search-settings></search-settings>
+            <!-- ÉCRAN RÉGLAGES PRINCIPAL -->
+            <div id="view-settings" class="view-screen">
+                <header class="view-header">
+                    <button class="back-btn" data-target="board">
+                        <span class="icon-placeholder" data-icon="arrow-left" data-size="18"></span>
+                        Retour
+                    </button>
+                    <h1>Réglages</h1>
+                    <div style="width: 44px;"></div>
+                </header>
+
+                <ul class="settings-list">
+                    <li class="settings-item" data-navigate="settings-favorites">
+                        <span class="item-icon"><span class="icon-placeholder" data-icon="star" data-filled="true"
+                                data-size="22"></span></span>
+                        <span class="item-label">Trajets favoris</span>
+                        <span class="item-accessory"><span class="icon-placeholder" data-icon="chevron-right"
+                                data-size="18"></span></span>
+                    </li>
+                    <li class="settings-item" data-navigate="settings-filters">
+                        <span class="item-icon"><span class="icon-placeholder" data-icon="cog" data-size="22"></span></span>
+                        <span class="item-label">Filtres de recherche</span>
+                        <span class="item-accessory"><span class="icon-placeholder" data-icon="chevron-right"
+                                data-size="18"></span></span>
+                    </li>
+                    <li class="settings-item-static">
+                        <span class="item-icon"><span class="icon-placeholder" data-icon="sun" data-size="22"></span></span>
+                        <span class="item-label">Mode Sombre</span>
+                        <label class="switch">
+                            <input id="theme-toggle" type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </li>
+                    <li class="settings-item" data-navigate="settings-api-key">
+                        <span class="item-icon"><span class="icon-placeholder" data-icon="cog" data-size="22"></span></span>
+                        <span class="item-label">Clé API SNCF</span>
+                        <span class="item-accessory"><span class="icon-placeholder" data-icon="chevron-right"
+                                data-size="18"></span></span>
+                    </li>
+                </ul>
             </div>
-        </div>
 
+            <!-- SOUS-ÉCRAN CLÉ API -->
+            <div id="view-settings-api-key" class="view-screen">
+                <header class="view-header">
+                    <button class="back-btn" data-target="settings">
+                        <span class="icon-placeholder" data-icon="arrow-left" data-size="18"></span>
+                        Réglages
+                    </button>
+                    <h1>Clé API SNCF</h1>
+                    <div style="width: 44px;"></div>
+                </header>
+                <div class="view-content">
+                    <div class="api-key-settings-card">
+                        <p class="api-key-desc">Votre clé API est stockée localement dans votre navigateur. Elle n'est
+                            jamais transmise à des tiers.</p>
+                        <div class="key-input-row-vertical">
+                            <input id="api-key-settings-input" class="text-input key-input" type="password"
+                                placeholder="Clé API SNCF" autocomplete="off">
+                            <button id="api-key-settings-save"
+                                class="action-btn-accent api-key-save-btn">Enregistrer</button>
+                        </div>
+                        <p id="api-key-settings-msg" class="key-settings-msg" style="display:none;"></p>
+                        <button id="api-key-clear-btn" class="text-btn-danger">Supprimer la clé</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SOUS-ÉCRAN FAVORIS -->
+            <div id="view-settings-favorites" class="view-screen">
+                <header class="view-header">
+                    <button class="back-btn" data-target="settings">
+                        <span class="icon-placeholder" data-icon="arrow-left" data-size="18"></span>
+                        Réglages
+                    </button>
+                    <h1>Favoris</h1>
+                    <div style="width: 44px;"></div>
+                </header>
+                <div class="view-content">
+                    <favorites-manager></favorites-manager>
+                </div>
+            </div>
+
+            <!-- SOUS-ÉCRAN FILTRES -->
+            <div id="view-settings-filters" class="view-screen">
+                <header class="view-header">
+                    <button class="back-btn" data-target="settings">
+                        <span class="icon-placeholder" data-icon="arrow-left" data-size="18"></span>
+                        Réglages
+                    </button>
+                    <h1>Filtres</h1>
+                    <div style="width: 44px;"></div>
+                </header>
+                <div class="view-content">
+                    <search-settings></search-settings>
+                </div>
+            </div>
+
+        </screen-manager>
     </div>
 
     <script type="module" src="/src/main.js"></script>

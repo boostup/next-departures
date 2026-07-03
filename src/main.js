@@ -8,9 +8,9 @@ import './components/clear-button/clear-button.js';
 import './components/auto-complete/auto-complete.js';
 import './components/header-actions/header-actions.js';
 import './components/refresh-button/refresh-button.js';
+import './components/screen-manager/screen-manager.js';
 import { iconSun, iconMoon, iconStar } from './icons/index.js';
 import { injectIcons } from './utils/icon-injector.js';
-import { initNavigationRouter, transitionToScreen } from './utils/navigation.js';
 import { formatSncfClockTime, getFormattedDate, computeDuration, getHaversineDistance, parseJourneys } from './utils.js';
 
 let suggestionTimeout = null;
@@ -19,10 +19,19 @@ function getApiKey() {
     return currentConfig.apiKey || '';
 }
 
+function dispatchNavigate(destination) {
+    const manager = document.querySelector('screen-manager');
+    if (manager) {
+        manager.dispatchEvent(new CustomEvent('navigate-to', {
+            detail: { destination },
+            bubbles: true
+        }));
+    }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     injectIcons();
     initTheme();
-    initNavigationRouter();
 
     const apiKey = getApiKey();
     if (!apiKey) {
@@ -33,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function showApiKeyGate() {
-    transitionToScreen('api-key');
+    dispatchNavigate('api-key');
     const input = document.getElementById('api-key-input');
     const submitBtn = document.getElementById('api-key-submit');
     const errorEl = document.getElementById('api-key-error');
@@ -78,10 +87,6 @@ function initMainApp() {
                 currentConfig.favorites = [...currentConfig.favorites, newFav];
             }
         });
-
-        headerActions.addEventListener('settings-click', () => {
-            transitionToScreen('settings');
-        });
     }
 
     if (refreshBtn) {
@@ -104,7 +109,7 @@ function initMainApp() {
         initGeolocationAndProximity();
     }
 
-    transitionToScreen('board');
+    dispatchNavigate('board');
 }
 
 function initApiKeySettings() {
