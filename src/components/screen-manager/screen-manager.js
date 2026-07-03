@@ -46,7 +46,7 @@ class ScreenManager extends HTMLElement {
 
         document.addEventListener('settings-click', this.settingsClickHandler);
 
-        this.addEventListener('click', (e) => {
+        this.addEventListener('click', this.clickHandler = (e) => {
             const settingsItem = e.target.closest('.settings-item');
             if (settingsItem) {
                 const dest = settingsItem.dataset.navigate;
@@ -67,6 +67,8 @@ class ScreenManager extends HTMLElement {
 
     disconnectedCallback() {
         document.removeEventListener('settings-click', this.settingsClickHandler);
+        this.removeEventListener('navigate-to', this.navigateHandler);
+        this.removeEventListener('click', this.clickHandler);
     }
 
     navigateTo(screenId) {
