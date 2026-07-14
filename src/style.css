@@ -6,6 +6,8 @@
     --accent: #47a7f5;
     --border-color: rgba(255, 255, 255, 0.08);
     --accent-gradient: linear-gradient(135deg, #47a7f5, #2670e8);
+    --switch-track: rgba(255, 255, 255, 0.12);
+    --switch-thumb-shadow: none;
 }
 
 :root.light-theme {
@@ -16,6 +18,8 @@
     --accent: #007aff;
     --border-color: rgba(0, 0, 0, 0.1);
     --accent-gradient: linear-gradient(135deg, #007aff, #0056b3);
+    --switch-track: rgba(0, 0, 0, 0.12);
+    --switch-thumb-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 body {
@@ -427,7 +431,7 @@ body {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(255, 255, 255, 0.12);
+    background-color: var(--switch-track);
     transition: .2s;
     border-radius: 26px;
 }
@@ -442,6 +446,7 @@ body {
     background-color: white;
     transition: .2s;
     border-radius: 50%;
+    box-shadow: var(--switch-thumb-shadow);
 }
 
 input:checked+.slider {
@@ -617,4 +622,19 @@ input:checked+.slider:before {
     font-size: 0.85rem;
     margin: 0 0 16px 0;
     line-height: 1.5;
+}
+
+.api-key-help {
+    margin-top: 16px;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.api-key-help a {
+    color: var(--accent);
+    text-decoration: none;
+}
+
+.api-key-help a:hover {
+    text-decoration: underline;
 }

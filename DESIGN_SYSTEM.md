@@ -206,7 +206,7 @@ Based on a 4px grid increment:
 ├── sw.js
 ├── manifest.json
 ├── src/
-│   ├── main.js             # App bootstrap, navigation, journey display
+│   ├── main.js             # App bootstrap, journey display
 │   ├── style.css            # Global styles + tokens
 │   ├── constants.js         # API URLs, default stations
 │   ├── state.js             # Reactive state with Proxy
@@ -228,19 +228,63 @@ Based on a 4px grid increment:
 │   │   ├── icon-clock.js
 │   │   ├── icon-refresh.js
 │   │   └── icon-search.js
+│   ├── utils/               # Shared utilities
+│   │   └── icon-injector.js
 │   ├── components/
+│   │   ├── clear-button/
+│   │   │   ├── clear-button.js
+│   │   │   ├── clear-button.html
+│   │   │   └── clear-button.css
+│   │   ├── journey-card/
+│   │   │   ├── journey-card.js
+│   │   │   ├── journey-card.html
+│   │   │   └── journey-card.css
+│   │   ├── auto-complete/
+│   │   │   ├── auto-complete.js
+│   │   │   ├── auto-complete.html
+│   │   │   └── auto-complete.css
+│   │   ├── header-actions/
+│   │   │   ├── header-actions.js
+│   │   │   ├── header-actions.html
+│   │   │   └── header-actions.css
+│   │   ├── refresh-button/
+│   │   │   ├── refresh-button.js
+│   │   │   ├── refresh-button.html
+│   │   │   └── refresh-button.css
 │   │   ├── search-settings/
 │   │   │   ├── search-settings.js
 │   │   │   ├── search-settings.html
 │   │   │   └── search-settings.css
-│   │   └── favorites-manager/
-│   │       ├── favorites-manager.js
-│   │       ├── favorites-manager.html
-│   │       └── favorites-manager.css
+│   │   ├── favorites-manager/
+│   │   │   ├── favorites-manager.js
+│   │   │   ├── favorites-manager.html
+│   │   │   └── favorites-manager.css
+│   │   ├── settings-panel/
+│   │   │   ├── settings-panel.js
+│   │   │   ├── settings-panel.html
+│   │   │   └── settings-panel.css
+│   │   └── screen-manager/
+│   │       ├── screen-manager.js
+│   │       ├── screen-manager.html
+│   │       └── screen-manager.css
 │   └── assets/
 │       └── (icon PNGs for PWA)
+├── tests/
+│   └── unit/
+│       ├── state.test.js
+│       ├── constants.test.js
+│       ├── main-utils.test.js
+│       ├── main-autocomplete.test.js
+│       ├── main-launch.test.js
+│       ├── screen-manager.test.js
+│       ├── clear-button.test.js
+│       ├── journey-card.test.js
+│       ├── auto-complete.test.js
+│       ├── header-actions.test.js
+│       ├── refresh-button.test.js
+│       ├── search-settings.test.js
+│       ├── favorites-manager.test.js
+│       └── settings-panel.test.js
 ```
 
----
-
-_Last updated: 2026-06-30_
+_Last updated: 2026-07-03_

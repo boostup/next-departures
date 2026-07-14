@@ -1,0 +1,78 @@
+:host {
+    display: block;
+    flex: 1;
+    position: relative;
+}
+
+.text-input {
+    flex: 1;
+    height: 44px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+    background: var(--card-color, #161822);
+    color: var(--text-main, #ffffff);
+    padding: 0 12px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+.text-input:focus {
+    outline: none;
+    border-color: var(--accent, #47a7f5);
+}
+
+.autocomplete-container {
+    flex: 1;
+    position: relative;
+}
+
+.autocomplete-container .text-input {
+    width: 100%;
+    padding-right: 32px;
+}
+
+.clear-btn-slot {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted, #8a8f9f);
+    padding: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.suggestions-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--card-color, #161822);
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+    border-radius: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    display: none;
+}
+
+.suggestion-item {
+    padding: 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    border-bottom: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+    color: var(--text-main, #ffffff);
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+}

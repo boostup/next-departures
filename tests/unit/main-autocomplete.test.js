@@ -6,67 +6,91 @@ describe('initAutocomplete clear button', () => {
     function setupDom() {
         document.body.innerHTML = `
             <div class="app-layout">
-                <div id="view-board" class="view-screen active">
-                    <div id="journeys-board"></div>
-                    <header class="view-header">
-                        <h1 id="route-display"></h1>
-                        <button id="quick-fav-btn" class="icon-btn">
-                            <span class="icon-placeholder" data-icon="star" data-size="24"></span>
-                        </button>
-                        <button id="go-settings-btn"></button>
-                    </header>
-                    <div class="search-section">
-                        <div class="autocomplete-container">
-                            <input id="dest-input" class="text-input" value="">
-                            <div id="suggestions-box" class="suggestions-dropdown"></div>
-                            <button id="dest-clear-btn" class="dest-clear-btn" style="display:none;">
-                                <span class="icon-placeholder" data-icon="x" data-size="16"></span>
+                <screen-manager>
+                    <div id="view-board" class="view-screen active">
+                        <div id="journeys-board"></div>
+                        <header class="view-header">
+                            <h1 id="route-display"></h1>
+                            <button id="quick-fav-btn" class="icon-btn">
+                                <span class="icon-placeholder" data-icon="star" data-size="24"></span>
                             </button>
+                            <button id="go-settings-btn"></button>
+                        </header>
+                        <div class="search-section">
+                            <div class="input-row" id="input-row">
+                                <button id="search-action-btn"></button>
+                            </div>
                         </div>
-                        <button id="search-action-btn"></button>
+                        <button id="manual-refresh-btn"></button>
                     </div>
-                    <button id="manual-refresh-btn"></button>
-                </div>
-                <div id="view-settings" class="view-screen">
-                    <header class="view-header">
-                        <button class="back-btn" data-target="board"></button>
-                        <h1>Réglages</h1>
-                        <div style="width: 44px;"></div>
-                    </header>
-                    <ul class="settings-list">
-                        <li class="settings-item" data-navigate="settings-favorites"></li>
-                        <li class="settings-item" data-navigate="settings-filters"></li>
-                        <li class="settings-item-static">
-                            <span class="item-icon"><span class="icon-placeholder" data-icon="sun" data-size="22"></span></span>
-                            <span class="item-label">Mode Sombre</span>
-                            <label class="switch">
-                                <input id="theme-toggle" type="checkbox">
-                                <span class="slider"></span>
-                            </label>
-                        </li>
-                        <li class="settings-item" data-navigate="settings-api-key"></li>
-                    </ul>
-                </div>
-                <div id="view-settings-favorites" class="view-screen"><favorites-manager></favorites-manager></div>
-                <div id="view-settings-filters" class="view-screen"><search-settings></search-settings></div>
-                <div id="view-settings-api-key" class="view-screen">
-                    <header class="view-header">
-                        <button class="back-btn" data-target="settings"></button>
-                        <h1>Clé API SNCF</h1>
-                        <div style="width: 44px;"></div>
-                    </header>
-                    <input id="api-key-settings-input">
-                    <button id="api-key-settings-save"></button>
-                    <button id="api-key-clear-btn"></button>
-                    <p id="api-key-settings-msg" style="display:none;"></p>
-                </div>
-                <div id="view-api-key" class="view-screen">
-                    <input id="api-key-input">
-                    <button id="api-key-submit"></button>
-                    <p id="api-key-error" style="display:none;"></p>
-                </div>
+                    <div id="view-settings" class="view-screen">
+                        <header class="view-header">
+                            <button class="back-btn" data-target="board"></button>
+                            <h1>Réglages</h1>
+                            <div style="width: 44px;"></div>
+                        </header>
+                        <ul class="settings-list">
+                            <li class="settings-item" data-navigate="settings-favorites"></li>
+                            <li class="settings-item" data-navigate="settings-filters"></li>
+                            <li class="settings-item-static">
+                                <span class="item-icon"><span class="icon-placeholder" data-icon="sun" data-size="22"></span></span>
+                                <span class="item-label">Mode Sombre</span>
+                                <label class="switch">
+                                    <input id="theme-toggle" type="checkbox">
+                                    <span class="slider"></span>
+                                </label>
+                            </li>
+                            <li class="settings-item" data-navigate="settings-api-key"></li>
+                        </ul>
+                    </div>
+                    <div id="view-settings-favorites" class="view-screen"><favorites-manager></favorites-manager></div>
+                    <div id="view-settings-filters" class="view-screen"><search-settings></search-settings></div>
+                    <div id="view-settings-api-key" class="view-screen">
+                        <header class="view-header">
+                            <button class="back-btn" data-target="settings"></button>
+                            <h1>Clé API SNCF</h1>
+                            <div style="width: 44px;"></div>
+                        </header>
+                        <input id="api-key-settings-input">
+                        <button id="api-key-settings-save"></button>
+                        <button id="api-key-clear-btn"></button>
+                        <p id="api-key-settings-msg" style="display:none;"></p>
+                    </div>
+                    <div id="view-api-key" class="view-screen">
+                        <input id="api-key-input">
+                        <button id="api-key-submit"></button>
+                        <p id="api-key-error" style="display:none;"></p>
+                    </div>
+                </screen-manager>
             </div>
         `;
+    }
+
+    async function loadMain() {
+        const { currentConfig } = await import('../../src/state.js');
+        currentConfig.apiKey = 'test-api-key';
+        await import('../../src/components/screen-manager/screen-manager.js');
+        await import('../../src/components/auto-complete/auto-complete.js');
+        await import('../../src/main.js');
+        setupAutocomplete();
+        document.dispatchEvent(new Event('DOMContentLoaded'));
+        return { currentConfig };
+    }
+
+    function setupAutocomplete() {
+        const inputRow = document.getElementById('input-row');
+        const autoComplete = document.createElement('auto-complete');
+        autoComplete.id = 'dest-autocomplete';
+        autoComplete.setAttribute('placeholder', 'Où allez-vous ? (ex: Vichy)');
+        
+        const clearBtn = document.createElement('clear-button');
+        clearBtn.id = 'dest-clear-btn';
+        clearBtn.setAttribute('size', '16');
+        
+        autoComplete.appendChild(clearBtn);
+        inputRow.insertBefore(autoComplete, document.getElementById('search-action-btn'));
+        
+        return autoComplete;
     }
 
     beforeEach(() => {
@@ -101,70 +125,69 @@ describe('initAutocomplete clear button', () => {
         Object.keys(storedItems).forEach(k => delete storedItems[k]);
     });
 
-    async function loadMain() {
-        const { currentConfig } = await import('../../src/state.js');
-        currentConfig.apiKey = 'test-api-key';
-        await import('../../src/main.js');
-        document.dispatchEvent(new Event('DOMContentLoaded'));
-        return { currentConfig };
-    }
-
     it('should keep clear button hidden when input is empty', async () => {
         await loadMain();
 
-        const input = document.getElementById('dest-input');
+        const autoComplete = document.getElementById('dest-autocomplete');
+        const input = autoComplete.shadowRoot.getElementById('autocomplete-input');
         const clearBtn = document.getElementById('dest-clear-btn');
 
         input.value = '';
         input.dispatchEvent(new Event('input'));
 
-        expect(clearBtn.style.display).toBe('none');
+        expect(clearBtn.getAttribute('input-has-content') !== 'true').toBe(true);
     });
 
     it('should show clear button when input has text', async () => {
         await loadMain();
 
-        const input = document.getElementById('dest-input');
+        const autoComplete = document.getElementById('dest-autocomplete');
+        const input = autoComplete.shadowRoot.getElementById('autocomplete-input');
         const clearBtn = document.getElementById('dest-clear-btn');
 
         input.value = 'Paris';
         input.dispatchEvent(new Event('input'));
 
-        expect(clearBtn.style.display).not.toBe('none');
+        expect(clearBtn.getAttribute('input-has-content')).toBe('true');
     });
 
     it('should empty input, hide suggestions, and hide clear button on click', async () => {
         await loadMain();
 
-        const input = document.getElementById('dest-input');
+        const autoComplete = document.getElementById('dest-autocomplete');
+        const input = autoComplete.shadowRoot.getElementById('autocomplete-input');
         const clearBtn = document.getElementById('dest-clear-btn');
-        const suggestionsBox = document.getElementById('suggestions-box');
 
         input.value = 'Paris';
         input.dispatchEvent(new Event('input'));
 
-        suggestionsBox.innerHTML = '<div class="suggestion-item">Paris Gare de Lyon</div>';
-        suggestionsBox.style.display = 'block';
+        autoComplete.items = [
+            { id: 'stop_area:SNCF:123456', label: 'Paris Gare de Lyon' }
+        ];
+
+        const dropdown = autoComplete.shadowRoot.getElementById('suggestions-dropdown');
+        expect(dropdown.style.display).toBe('block');
 
         clearBtn.click();
 
         expect(input.value).toBe('');
-        expect(suggestionsBox.style.display).toBe('none');
-        expect(clearBtn.style.display).toBe('none');
+        expect(dropdown.style.display).toBe('none');
+        expect(clearBtn.getAttribute('input-has-content')).toBe('false');
     });
 
     it('should keep clear button hidden after clearing empty input', async () => {
         await loadMain();
 
-        const input = document.getElementById('dest-input');
+        const autoComplete = document.getElementById('dest-autocomplete');
+        const input = autoComplete.shadowRoot.getElementById('autocomplete-input');
         const clearBtn = document.getElementById('dest-clear-btn');
 
         input.value = 'Paris';
         input.dispatchEvent(new Event('input'));
-        expect(clearBtn.style.display).not.toBe('none');
+        expect(clearBtn.getAttribute('input-has-content')).toBe('true');
 
         input.value = '';
         input.dispatchEvent(new Event('input'));
-        expect(clearBtn.style.display).toBe('none');
+        expect(clearBtn.getAttribute('input-has-content')).toBe('false');
     });
 });

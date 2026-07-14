@@ -1,0 +1,55 @@
+:host {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2000;
+}
+
+:host(.active) {
+    pointer-events: auto;
+}
+
+.panel-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:host(.active) .panel-backdrop {
+    opacity: 1;
+}
+
+.settings-panel-container {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100%;
+    max-width: 420px;
+    height: 100%;
+    background: var(--bg-color, #0d0e12);
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+:host(.active) .settings-panel-container {
+    transform: translateX(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .panel-backdrop,
+    .settings-panel-container {
+        transition: none;
+    }
+}

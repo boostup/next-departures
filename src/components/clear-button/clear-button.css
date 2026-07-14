@@ -1,0 +1,17 @@
+button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    margin: 0;
+    background: none;
+    border: none;
+    color: var(--text-muted, #8a8f9f);
+    cursor: pointer;
+    border-radius: 8px;
+}
+button:hover {
+    background: rgba(255, 255, 255, 0.08);
+}
