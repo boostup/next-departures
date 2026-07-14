@@ -39,7 +39,16 @@ class SettingsPanel extends HTMLElement {
             if (backBtn) {
                 const target = backBtn.dataset.target;
                 if (target) {
-                    this.navigateTo(target);
+                    // If the target view lives inside the panel, navigate
+                    // within the panel. Otherwise (e.g. "board") this is a
+                    // request to exit the panel, so close it like a backdrop
+                    // click would.
+                    const internalView = this.querySelector(`#view-${target}`);
+                    if (internalView) {
+                        this.navigateTo(target);
+                    } else {
+                        this.close();
+                    }
                 }
             }
         };

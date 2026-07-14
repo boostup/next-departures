@@ -122,6 +122,23 @@ describe('SettingsPanel component', () => {
         expect(document.getElementById('view-settings-favorites').classList.contains('active')).toBe(false);
     });
 
+    it('should close panel on back-btn targeting an external view like board', async () => {
+        await loadSettingsPanel();
+        const panel = document.querySelector('settings-panel');
+        panel.open();
+        expect(panel.classList.contains('active')).toBe(true);
+
+        const backBtn = document.createElement('button');
+        backBtn.className = 'back-btn';
+        backBtn.dataset.target = 'board';
+        document.getElementById('view-settings').appendChild(backBtn);
+
+        backBtn.click();
+
+        // Closing must behave like a backdrop click: panel (and its backdrop) hidden.
+        expect(panel.classList.contains('active')).toBe(false);
+    });
+
     it('should close panel on backdrop click', async () => {
         await loadSettingsPanel();
         const panel = document.querySelector('settings-panel');
