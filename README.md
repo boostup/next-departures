@@ -32,4 +32,5 @@ npm run test:watch
 ```
 
 ## Deployment
-npm run deploy
+
+The app is automatically deployed to GitHub Pages via GitHub Actions (see 'pages.yml' config file) whenever changes are merged into the `main` branch. No manual deployment step is required.
