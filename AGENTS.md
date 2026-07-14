@@ -26,6 +26,9 @@ You must approach every code modification through the lens of TDD. Do not skip s
 
 ### Phase 3: Refactor & Conformance Check
 - Clean up the code, eliminate duplication, improve variable naming, and optimize performance while keeping the tests green.
+
+### Phase 4: Regression Guard (Debugging)
+- When tasked with debugging an issue and the root cause has been found and fixed, **always write a new test (or a set of tests if required)** that captures the previously broken behavior and proves the fix. This regression test must fail against the unfixed code and pass against the fixed code, locking the fix in place so the defect cannot silently return.
 - **Post-Change Verification:** Immediately after making code changes and verifying tests pass, you **MUST** read and cross-reference:
   1. `README.md`: Ensure public APIs, setup steps, or environment flags match your implementation.
   2. `DESIGN_SYSTEM.md`: Verify that any structural, layout, or style changes conform perfectly to the project's design language, custom properties, and UI constraints. Correct any drift immediately.
