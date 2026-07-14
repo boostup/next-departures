@@ -53,7 +53,7 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(255, 255, 255, 0.12);
+    background-color: var(--switch-track);
     transition: .2s;
     border-radius: 24px;
 }
@@ -68,6 +68,7 @@
     background-color: white;
     transition: .2s;
     border-radius: 50%;
+    box-shadow: var(--switch-thumb-shadow);
 }
 
 input:checked+.slider {
