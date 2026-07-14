@@ -25,6 +25,15 @@ jobs:
         with:
           node-version: 22
           cache: 'npm'
+      - name: Debug package files
+        run: |
+          echo "=== package.json ==="
+          cat package.json
+          echo "=== package-lock.json head ==="
+          head -30 package-lock.json
+          echo "=== esbuild refs in lockfile ==="
+          grep -c "esbuild" package-lock.json || true
+          grep "esbuild" package-lock.json | head -5 || true
       - name: Install dependencies
         run: npm ci
       - name: Build
