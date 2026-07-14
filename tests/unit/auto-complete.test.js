@@ -1,4 +1,6 @@
 import { vi } from 'vitest';
+import fs from 'node:fs';
+import * as path from 'node:path';
 
 describe('auto-complete', () => {
     beforeEach(() => {
@@ -124,5 +126,28 @@ describe('auto-complete', () => {
         el.dispatchEvent(new CustomEvent('clear'));
 
         expect(input.value).toBe('');
+    });
+
+    it('should preserve base text-input formatting inside shadow DOM', async () => {
+        await import('../../src/components/auto-complete/auto-complete.js');
+
+        const el = document.createElement('auto-complete');
+        document.body.appendChild(el);
+
+        const cssPath = path.join(process.cwd(), 'src/components/auto-complete/auto-complete.css');
+        const cssContent = fs.readFileSync(cssPath, 'utf-8');
+
+        expect(cssContent).toContain('.text-input {');
+        expect(cssContent).toContain('height: 44px');
+        expect(cssContent).toContain('border-radius: 10px');
+        expect(cssContent).toContain('border: 1px solid');
+        expect(cssContent).toContain('background: var(--card-color');
+        expect(cssContent).toContain('padding: 0 12px');
+        expect(cssContent).toContain('font-size: 0.95rem');
+        expect(cssContent).toContain('.text-input:focus {');
+        expect(cssContent).toContain('border-color: var(--accent');
+
+        const input = el.shadowRoot.getElementById('autocomplete-input');
+        expect(input.classList.contains('text-input')).toBe(true);
     });
 });

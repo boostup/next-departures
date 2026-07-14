@@ -4,6 +4,23 @@
     position: relative;
 }
 
+.text-input {
+    flex: 1;
+    height: 44px;
+    border-radius: 10px;
+    border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+    background: var(--card-color, #161822);
+    color: var(--text-main, #ffffff);
+    padding: 0 12px;
+    font-size: 0.95rem;
+    box-sizing: border-box;
+}
+
+.text-input:focus {
+    outline: none;
+    border-color: var(--accent, #47a7f5);
+}
+
 .autocomplete-container {
     flex: 1;
     position: relative;
