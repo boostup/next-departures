@@ -177,4 +177,24 @@ describe('favorites-manager', () => {
 
         window.dispatchEvent = originalDispatchEvent;
     });
+
+    it('should not throw when loading favorite without dest-input in DOM', async () => {
+        const { currentConfig } = await import('../../src/state.js');
+
+        currentConfig.favorites = [
+            { from: { id: 'f1', name: 'From Station' }, to: { id: 't1', name: 'To Station' }, label: 'From ➔ To' }
+        ];
+        currentConfig.defaultRoute = null;
+
+        // Simulate real app DOM where dest-input does not exist
+        document.body.innerHTML = '';
+
+        await import('../../src/components/favorites-manager/favorites-manager.js');
+
+        const el = document.createElement('favorites-manager');
+        document.body.appendChild(el);
+
+        const loadBtn = el.shadowRoot.querySelector('.fav-title');
+        expect(() => loadBtn.click()).not.toThrow();
+    });
 });

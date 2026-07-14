@@ -70,7 +70,6 @@ class FavoritesManager extends HTMLElement {
             if (action === 'load') {
                 currentConfig.from = targetRoute.from;
                 currentConfig.to = targetRoute.to;
-                document.getElementById('dest-input').value = targetRoute.to.name;
                 window.dispatchEvent(new CustomEvent('favorites-navigate', {
                     detail: { destination: 'board' },
                     bubbles: true,
