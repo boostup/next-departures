@@ -259,6 +259,10 @@ Based on a 4px grid increment:
 │   │   │   ├── favorites-manager.js
 │   │   │   ├── favorites-manager.html
 │   │   │   └── favorites-manager.css
+│   │   ├── settings-panel/
+│   │   │   ├── settings-panel.js
+│   │   │   ├── settings-panel.html
+│   │   │   └── settings-panel.css
 │   │   └── screen-manager/
 │   │       ├── screen-manager.js
 │   │       ├── screen-manager.html
@@ -279,7 +283,8 @@ Based on a 4px grid increment:
 │       ├── header-actions.test.js
 │       ├── refresh-button.test.js
 │       ├── search-settings.test.js
-│       └── favorites-manager.test.js
+│       ├── favorites-manager.test.js
+│       └── settings-panel.test.js
 ```
 
-_Last updated: 2026-07-01_
+_Last updated: 2026-07-03_

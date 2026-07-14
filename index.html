@@ -60,7 +60,9 @@
 
                 <refresh-button id="manual-refresh-btn"></refresh-button>
             </div>
+        </screen-manager>
 
+        <settings-panel>
             <!-- ÉCRAN RÉGLAGES PRINCIPAL -->
             <div id="view-settings" class="view-screen">
                 <header class="view-header">
@@ -134,7 +136,7 @@
                 <header class="view-header">
                     <button class="back-btn" data-target="settings">
                         <span class="icon-placeholder" data-icon="arrow-left" data-size="18"></span>
-                        Réglages
+                        Favoris
                     </button>
                     <h1>Favoris</h1>
                     <div style="width: 44px;"></div>
@@ -149,7 +151,7 @@
                 <header class="view-header">
                     <button class="back-btn" data-target="settings">
                         <span class="icon-placeholder" data-icon="arrow-left" data-size="18"></span>
-                        Réglages
+                        Filtres
                     </button>
                     <h1>Filtres</h1>
                     <div style="width: 44px;"></div>
@@ -158,8 +160,7 @@
                     <search-settings></search-settings>
                 </div>
             </div>
-
-        </screen-manager>
+        </settings-panel>
     </div>
 
     <script type="module" src="/src/main.js"></script>

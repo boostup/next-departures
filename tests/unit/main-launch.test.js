@@ -162,6 +162,34 @@ describe('app launch shows next departures board', () => {
         expect(journeysBoard.querySelector('journey-card')).not.toBeNull();
     });
 
+    it('opens settings panel when gear icon is clicked on the board', async () => {
+        const panelHost = document.createElement('settings-panel');
+        panelHost.innerHTML = `
+            <div id="view-settings" class="view-screen">Settings Main</div>
+            <div id="view-settings-favorites" class="view-screen">Favorites Screen</div>
+            <div id="view-settings-filters" class="view-screen">Filters Screen</div>
+            <div id="view-settings-api-key" class="view-screen">API Key Settings</div>
+        `;
+        document.querySelector('.app-layout').appendChild(panelHost);
+
+        await import('../../src/components/settings-panel/settings-panel.js');
+
+        await loadMain();
+
+        await new Promise(resolve => setTimeout(resolve, 0));
+
+        const panel = document.querySelector('settings-panel');
+        expect(panel.classList.contains('active')).toBe(false);
+
+        const headerEl = document.querySelector('header-actions');
+        const gearBtn = headerEl.shadowRoot.getElementById('go-settings-btn');
+        gearBtn.click();
+
+        await new Promise(resolve => setTimeout(resolve, 0));
+
+        expect(panel.classList.contains('active')).toBe(true);
+    });
+
     it('navigates to the board and renders next departures after geolocation fallback', async () => {
         vi.stubGlobal('window', createWindowStub(true));
 

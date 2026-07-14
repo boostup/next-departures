@@ -17,7 +17,7 @@ describe('favorites-manager', () => {
             removeEventListener: () => {}
         });
 
-        document.body.innerHTML = '';
+        document.body.innerHTML = '<input id="dest-input">';
     });
 
     afterEach(() => {
@@ -144,5 +144,37 @@ describe('favorites-manager', () => {
 
         const crownSvg = el.shadowRoot.querySelector('.btn-pin svg');
         expect(crownSvg).toBeDefined();
+    });
+
+    it('should dispatch favorites-navigate event when load button is clicked', async () => {
+        const { currentConfig } = await import('../../src/state.js');
+
+        currentConfig.favorites = [
+            { from: { id: 'f1', name: 'From Station' }, to: { id: 't1', name: 'To Station' }, label: 'From ➔ To' }
+        ];
+        currentConfig.defaultRoute = null;
+
+        let dispatchedEvent = null;
+        const originalDispatchEvent = window.dispatchEvent;
+        window.dispatchEvent = (event) => {
+            dispatchedEvent = event;
+            return originalDispatchEvent(event);
+        };
+
+        await import('../../src/components/favorites-manager/favorites-manager.js');
+
+        const el = document.createElement('favorites-manager');
+        document.body.appendChild(el);
+
+        const loadBtn = el.shadowRoot.querySelector('.fav-title');
+        loadBtn.click();
+
+        expect(dispatchedEvent).toBeTruthy();
+        expect(dispatchedEvent.type).toBe('favorites-navigate');
+        expect(dispatchedEvent.detail.destination).toBe('board');
+        expect(dispatchedEvent.bubbles).toBe(true);
+        expect(dispatchedEvent.composed).toBe(true);
+
+        window.dispatchEvent = originalDispatchEvent;
     });
 });

@@ -9,10 +9,6 @@ describe('ScreenManager component', () => {
                 <screen-manager>
                     <div id="view-api-key" class="view-screen active">API Key Screen</div>
                     <div id="view-board" class="view-screen">Board Screen</div>
-                    <div id="view-settings" class="view-screen">Settings Screen</div>
-                    <div id="view-settings-favorites" class="view-screen">Favorites Screen</div>
-                    <div id="view-settings-filters" class="view-screen">Filters Screen</div>
-                    <div id="view-settings-api-key" class="view-screen">API Key Settings Screen</div>
                 </screen-manager>
             </div>
         `;
@@ -39,7 +35,6 @@ describe('ScreenManager component', () => {
             matchMedia: () => ({ matches: false })
         });
 
-        // Override document.addEventListener to use real implementation for event capture
         const originalDocument = global.document;
 
         vi.resetModules();
@@ -74,43 +69,43 @@ describe('ScreenManager component', () => {
         await loadScreenManager();
         const manager = document.querySelector('screen-manager');
         
-        manager.setAttribute('active-view', 'settings');
-        await new Promise(resolve => setTimeout(resolve, 0));
-        
-        const settings = document.getElementById('view-settings');
-        expect(settings.classList.contains('active')).toBe(true);
-        
         manager.setAttribute('active-view', 'board');
         await new Promise(resolve => setTimeout(resolve, 0));
         
-        expect(settings.classList.contains('active')).toBe(false);
-        expect(document.getElementById('view-board').classList.contains('active')).toBe(true);
-    });
-
-    it('should transition to settings screen on navigate-to event with destination detail', async () => {
-        await loadScreenManager();
-        const manager = document.querySelector('screen-manager');
+        const board = document.getElementById('view-board');
+        expect(board.classList.contains('active')).toBe(true);
         
-        manager.dispatchEvent(new CustomEvent('navigate-to', {
-            detail: { destination: 'settings' },
-            bubbles: true
-        }));
+        manager.setAttribute('active-view', 'api-key');
+        await new Promise(resolve => setTimeout(resolve, 0));
         
-        const settings = document.getElementById('view-settings');
-        expect(settings.classList.contains('active')).toBe(true);
+        expect(board.classList.contains('active')).toBe(false);
+        expect(document.getElementById('view-api-key').classList.contains('active')).toBe(true);
     });
 
     it('should transition to board screen on navigate-to event', async () => {
         await loadScreenManager();
         const manager = document.querySelector('screen-manager');
         
-        document.getElementById('view-settings').classList.add('active');
+        document.getElementById('view-api-key').classList.add('active');
         manager.dispatchEvent(new CustomEvent('navigate-to', {
             detail: { destination: 'board' },
             bubbles: true
         }));
         
         expect(document.getElementById('view-board').classList.contains('active')).toBe(true);
+    });
+
+    it('should transition to api-key screen on navigate-to event', async () => {
+        await loadScreenManager();
+        const manager = document.querySelector('screen-manager');
+        
+        document.getElementById('view-board').classList.add('active');
+        manager.dispatchEvent(new CustomEvent('navigate-to', {
+            detail: { destination: 'api-key' },
+            bubbles: true
+        }));
+        
+        expect(document.getElementById('view-api-key').classList.contains('active')).toBe(true);
     });
 
     it('should ignore missing destination gracefully (no-op)', async () => {
@@ -125,49 +120,26 @@ describe('ScreenManager component', () => {
             bubbles: true
         }));
         
-        const allScreens = document.querySelectorAll('.view-screen');
+        const allScreens = manager.querySelectorAll('.view-screen');
         const activeCount = Array.from(allScreens).filter(s => s.classList.contains('active')).length;
         expect(activeCount).toBe(0);
     });
 
-    it('should transition to settings on settings-click event (shadow DOM bridge)', async () => {
-        await loadScreenManager();
-        
-        document.dispatchEvent(new CustomEvent('settings-click'));
-        
-        const settings = document.getElementById('view-settings');
-        expect(settings.classList.contains('active')).toBe(true);
-    });
-
-    it('should listen for settings-item clicks and navigate', async () => {
-        await loadScreenManager();
-        
-        const settingsItem = document.createElement('li');
-        settingsItem.className = 'settings-item';
-        settingsItem.dataset.navigate = 'settings-filters';
-        settingsItem.textContent = 'Filters';
-        
-        document.getElementById('view-settings').appendChild(settingsItem);
-        
-        settingsItem.click();
-        
-        expect(document.getElementById('view-settings-filters').classList.contains('active')).toBe(true);
-    });
-
-    it('should listen for back-btn clicks and navigate', async () => {
+    it('should only manage its direct children, not settings views', async () => {
         await loadScreenManager();
         const manager = document.querySelector('screen-manager');
         
-        manager.setAttribute('active-view', 'settings-filters');
+        const settingsView = document.createElement('div');
+        settingsView.id = 'view-settings';
+        settingsView.className = 'view-screen';
+        manager.appendChild(settingsView);
         
-        const backBtn = document.createElement('button');
-        backBtn.className = 'back-btn';
-        backBtn.dataset.target = 'board';
+        manager.dispatchEvent(new CustomEvent('navigate-to', {
+            detail: { destination: 'settings' },
+            bubbles: true
+        }));
         
-        document.getElementById('view-settings-filters').appendChild(backBtn);
-        
-        backBtn.click();
-        
-        expect(document.getElementById('view-board').classList.contains('active')).toBe(true);
+        expect(settingsView.classList.contains('active')).toBe(true);
+        expect(document.getElementById('view-api-key').classList.contains('active')).toBe(false);
     });
 });

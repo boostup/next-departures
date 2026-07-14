@@ -91,4 +91,17 @@ describe('header-actions', () => {
         const favBtn = el.shadowRoot.getElementById('quick-fav-btn');
         expect(favBtn.classList.contains('active')).toBe(true);
     });
+
+    it('should render cog icon in settings button', async () => {
+        await import('../../src/components/header-actions/header-actions.js');
+
+        const el = document.createElement('header-actions');
+        document.body.appendChild(el);
+
+        const settingsBtn = el.shadowRoot.getElementById('go-settings-btn');
+        const iconPlaceholder = settingsBtn.querySelector('.icon-placeholder');
+        const svg = iconPlaceholder.querySelector('svg');
+
+        expect(svg).not.toBeNull();
+    });
 });

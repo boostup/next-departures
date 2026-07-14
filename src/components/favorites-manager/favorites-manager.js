@@ -71,8 +71,11 @@ class FavoritesManager extends HTMLElement {
                 currentConfig.from = targetRoute.from;
                 currentConfig.to = targetRoute.to;
                 document.getElementById('dest-input').value = targetRoute.to.name;
-                document.getElementById('view-settings-favorites').classList.remove('active');
-                document.getElementById('view-board').classList.add('active');
+                window.dispatchEvent(new CustomEvent('favorites-navigate', {
+                    detail: { destination: 'board' },
+                    bubbles: true,
+                    composed: true
+                }));
             } else if (action === 'pin') {
                 currentConfig.defaultRoute = targetRoute;
             } else if (action === 'delete') {

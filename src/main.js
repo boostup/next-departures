@@ -9,6 +9,7 @@ import './components/auto-complete/auto-complete.js';
 import './components/header-actions/header-actions.js';
 import './components/refresh-button/refresh-button.js';
 import './components/screen-manager/screen-manager.js';
+import './components/settings-panel/settings-panel.js';
 import { iconSun, iconMoon, iconStar } from './icons/index.js';
 import { injectIcons } from './utils/icon-injector.js';
 import { formatSncfClockTime, getFormattedDate, computeDuration, getHaversineDistance, parseJourneys } from './utils.js';

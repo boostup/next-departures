@@ -1,5 +1,6 @@
 import htmlText from './screen-manager.html?raw';
 import cssText from './screen-manager.css?inline';
+import { activateView } from '../../utils/view-navigation.js';
 
 class ScreenManager extends HTMLElement {
     static get observedAttributes() {
@@ -38,49 +39,24 @@ class ScreenManager extends HTMLElement {
             }
         };
 
-        this.settingsClickHandler = () => {
-            this.navigateTo('settings');
+        this.favoritesNavigateHandler = (e) => {
+            const { destination } = e.detail || {};
+            if (destination) {
+                this.navigateTo(destination);
+            }
         };
 
         this.addEventListener('navigate-to', this.navigateHandler);
-
-        document.addEventListener('settings-click', this.settingsClickHandler);
-
-        this.addEventListener('click', this.clickHandler = (e) => {
-            const settingsItem = e.target.closest('.settings-item');
-            if (settingsItem) {
-                const dest = settingsItem.dataset.navigate;
-                if (dest) {
-                    this.navigateTo(dest);
-                }
-            }
-
-            const backBtn = e.target.closest('.back-btn');
-            if (backBtn) {
-                const target = backBtn.dataset.target;
-                if (target) {
-                    this.navigateTo(target);
-                }
-            }
-        });
+        window.addEventListener('favorites-navigate', this.favoritesNavigateHandler);
     }
 
     disconnectedCallback() {
-        document.removeEventListener('settings-click', this.settingsClickHandler);
         this.removeEventListener('navigate-to', this.navigateHandler);
-        this.removeEventListener('click', this.clickHandler);
+        window.removeEventListener('favorites-navigate', this.favoritesNavigateHandler);
     }
 
     navigateTo(screenId) {
-        const allScreens = document.querySelectorAll('.view-screen');
-        allScreens.forEach(scr => {
-            scr.classList.remove('active');
-        });
-
-        const target = document.getElementById(`view-${screenId}`);
-        if (target) {
-            target.classList.add('active');
-        }
+        activateView(this, screenId);
     }
 }
 

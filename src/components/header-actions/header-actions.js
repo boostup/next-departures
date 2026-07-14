@@ -1,5 +1,5 @@
 import { currentConfig } from '../../state.js';
-import { iconStar } from '../../icons/index.js';
+import { iconStar, iconCog } from '../../icons/index.js';
 import htmlText from './header-actions.html?raw';
 import cssText from './header-actions.css?inline';
 
@@ -29,6 +29,8 @@ class HeaderActions extends HTMLElement {
         this.favBtn = this.shadowRoot.getElementById('quick-fav-btn');
         this.favIcon = this.favBtn.querySelector('.icon-placeholder');
         this.settingsBtn = this.shadowRoot.getElementById('go-settings-btn');
+        this.settingsIcon = this.settingsBtn.querySelector('.icon-placeholder');
+        this.settingsIcon.innerHTML = iconCog({ size: 24, className: '' });
     }
 
     bindEvents() {
@@ -37,7 +39,7 @@ class HeaderActions extends HTMLElement {
         });
 
         this.settingsBtn.addEventListener('click', () => {
-            this.dispatchEvent(new CustomEvent('settings-click'));
+            this.dispatchEvent(new CustomEvent('settings-click', { bubbles: true }));
         });
     }
 
