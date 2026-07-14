@@ -165,4 +165,19 @@ describe('SettingsPanel component', () => {
         const container = panel.shadowRoot.querySelector('.settings-panel-container');
         expect(container).toBeTruthy();
     });
+
+    it('should close panel on favorites-navigate event', async () => {
+        await loadSettingsPanel();
+        const panel = document.querySelector('settings-panel');
+        panel.open();
+        expect(panel.classList.contains('active')).toBe(true);
+
+        window.dispatchEvent(new CustomEvent('favorites-navigate', {
+            detail: { destination: 'board' },
+            bubbles: true,
+            composed: true
+        }));
+
+        expect(panel.classList.contains('active')).toBe(false);
+    });
 });
